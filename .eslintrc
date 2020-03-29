@@ -1,0 +1,18 @@
+{
+  "plugins": ["flowtype", "react", "react-hooks"],
+  "extends": ["plugin:flowtype/recommended", "plugin:react/recommended"],
+  "rules": {
+    "no-unused-expressions": 1,
+    "no-unused-vars": 1,
+    "react/prop-types": 0,
+    "flowtype/generic-spacing": 0,
+    "no-debugger": "error",
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "warn"
+  },
+  "settings": {
+    "flowtype": {
+      "onlyFilesWithFlowAnnotation": true
+    }
+  }
+}
