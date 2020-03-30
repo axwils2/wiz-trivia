@@ -1,6 +1,6 @@
 import app from "firebase/app";
 import "firebase/auth";
-import "firebase/database";
+import "firebase/firestore";
 
 const config = {
   apiKey: process.env.REACT_APP_API_KEY,
@@ -15,7 +15,7 @@ class Firebase {
     app.initializeApp(config);
 
     this.auth = app.auth();
-    this.db = app.database();
+    this.firestore = app.firestore();
   }
 
   // *** Auth API ***
@@ -37,13 +37,9 @@ class Firebase {
     this.auth.onAuthStateChanged(authUser => {
       if (authUser) {
         this.user(authUser.uid)
-          .once("value")
-          .then(snapshot => {
-            const dbUser = snapshot.val();
-            // default empty roles
-            if (!dbUser.roles) {
-              dbUser.roles = {};
-            }
+          .get()
+          .then(user => {
+            const dbUser = user.data();
             // merge auth and db user
             authUser = {
               uid: authUser.uid,
@@ -60,7 +56,9 @@ class Firebase {
     });
 
   // *** User API ***
-  user = uid => this.db.ref(`users/${uid}`);
-  users = () => this.db.ref("users");
+  users = () => this.firestore.collection("users");
+  user = uid => this.users().doc(uid);
+
+  timestamp = () => app.firestore.Timestamp.now();
 }
 export default Firebase;

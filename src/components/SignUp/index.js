@@ -3,7 +3,7 @@ import { Link, withRouter } from "react-router-dom";
 import { compose } from "recompose";
 import { withFirebase } from "../Firebase";
 import * as ROUTES from "../../constants/routes";
-import * as ROLES from "../../constants/roles";
+
 const SignUpPage = () => (
   <div>
     <h1>SignUp</h1>
@@ -16,7 +16,6 @@ const INITIAL_STATE = {
   email: "",
   passwordOne: "",
   passwordTwo: "",
-  isAdmin: false,
   error: null
 };
 
@@ -31,19 +30,14 @@ class SignUpFormBase extends Component {
     this.state = { ...INITIAL_STATE };
   }
   onSubmit = event => {
-    const { username, email, passwordOne, isAdmin } = this.state;
-    const roles = {};
-    if (isAdmin) {
-      roles[ROLES.ADMIN] = ROLES.ADMIN;
-    }
+    const { username, email, passwordOne } = this.state;
     this.props.firebase
       .doCreateUserWithEmailAndPassword(email, passwordOne)
       .then(authUser => {
         // Create a user in your Firebase realtime database
         return this.props.firebase.user(authUser.user.uid).set({
-          username,
-          email,
-          roles
+          name: username,
+          email
         });
       })
       .then(() => {
@@ -68,14 +62,7 @@ class SignUpFormBase extends Component {
     this.setState({ [event.target.name]: event.target.checked });
   };
   render() {
-    const {
-      username,
-      email,
-      passwordOne,
-      passwordTwo,
-      isAdmin,
-      error
-    } = this.state;
+    const { username, email, passwordOne, passwordTwo, error } = this.state;
     const isInvalid =
       passwordOne !== passwordTwo ||
       passwordOne === "" ||
@@ -112,15 +99,6 @@ class SignUpFormBase extends Component {
           type="password"
           placeholder="Confirm Password"
         />
-        <label>
-          Admin:
-          <input
-            name="isAdmin"
-            type="checkbox"
-            checked={isAdmin}
-            onChange={this.onChangeCheckbox}
-          />
-        </label>
         <button type="submit" disabled={isInvalid}>
           Sign Up
         </button>
