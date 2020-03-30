@@ -13,6 +13,5 @@ suppress_comment=\\(.\\|\n\\)*\\$FlowIssue
 module.name_mapper='^constants\(.*\)$' -> '<PROJECT_ROOT>/src/constants/\1'
 module.name_mapper='^components\(.*\)$' -> '<PROJECT_ROOT>/src/components/\1'
 module.name_mapper='^pages\(.*\)$' -> '<PROJECT_ROOT>/src/pages/\1'
-module.name_mapper='^serviceWorker' -> '<PROJECT_ROOT>/src/serviceWorker.js'
 
 [strict]

@@ -30,7 +30,7 @@ class UserItemBase extends Component {
     }
 
     this.setState({ loading: true });
-    this.props.firebase
+    this.props.firebase.firestore
       .user(this.props.match.params.id)
       .on("value", snapshot => {
         this.setState({
@@ -40,11 +40,11 @@ class UserItemBase extends Component {
       });
   }
   componentWillUnmount() {
-    this.props.firebase.user(this.props.match.params.id).off();
+    this.props.firebase.firestore.user(this.props.match.params.id).off();
   }
 
   onSendPasswordResetEmail = () => {
-    this.props.firebase.doPasswordReset(this.state.user.email);
+    this.props.firebase.auth.doPasswordReset(this.state.user.email);
   };
 
   render() {
@@ -86,7 +86,7 @@ class UserListBase extends Component {
   }
   componentDidMount() {
     this.setState({ loading: true });
-    this.props.firebase.users().on("value", snapshot => {
+    this.props.firebase.firestore.users().on("value", snapshot => {
       const usersObject = snapshot.val();
       const usersList = Object.keys(usersObject).map(key => ({
         ...usersObject[key],
@@ -99,7 +99,7 @@ class UserListBase extends Component {
     });
   }
   componentWillUnmount() {
-    this.props.firebase.users().off();
+    this.props.firebase.firestore.users().off();
   }
   render() {
     const { users, loading } = this.state;
