@@ -5,9 +5,9 @@ import {
   AuthUserContext,
   withAuthorization,
   withEmailVerification
-} from "../Session";
-import { PasswordForgetForm } from "../PasswordForget";
-import PasswordChangeForm from "../PasswordChange";
+} from "components/Session";
+import { PasswordForgetForm } from "pages/PasswordForget";
+import PasswordChangeForm from "pages/PasswordChange";
 
 const AccountPage = () => (
   <AuthUserContext.Consumer>

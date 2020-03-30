@@ -1,6 +1,6 @@
 import React from "react";
 import { compose } from "recompose";
-import { withAuthorization, withEmailVerification } from "../Session";
+import { withAuthorization, withEmailVerification } from "components/Session";
 const HomePage = () => (
   <div>
     <h1>Home Page</h1>
