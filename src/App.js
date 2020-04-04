@@ -5,7 +5,7 @@ import { withAuthentication } from "components/Session";
 
 import { TriviaSessionProvider } from "components/TriviaSessionContext";
 import { TeamProvider } from "components/TeamContext";
-import LandingPage from "pages/Landing";
+import LandingPage from "pages/LandingPage";
 // import SignUpPage from "pages/SignUp";
 // import SignInPage from "pages/SignIn";
 // import PasswordForgetPage from "pages/PasswordForget";
