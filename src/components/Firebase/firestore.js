@@ -1,5 +1,4 @@
 // @flow
-import * as firebase from "firebase";
 import { firestore } from "./firebase";
 
 export const users = () => firestore.collection("users");
@@ -25,5 +24,3 @@ export const question = (
   categoryUid: string,
   uid: string
 ) => questions(triviaSessionUid, categoryUid).doc(uid);
-
-export const timestamp = () => firebase.firestore.Timestamp.now();
