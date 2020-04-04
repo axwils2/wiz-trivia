@@ -1,3 +1,4 @@
+// @flow
 import React from "react";
 import { withFirebase } from "components/Firebase";
 
