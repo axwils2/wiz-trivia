@@ -10,6 +10,7 @@ import LandingPage from "pages/LandingPage";
 import TriviaSessionsPage from "pages/TriviaSessionsPage";
 import TriviaSessionPage from "pages/TriviaSessionPage";
 import CategoryPage from "pages/CategoryPage";
+import QuestionPage from "pages/QuestionPage";
 import AccountPage from "pages/AccountPage";
 import SignInPage from "pages/SignInPage";
 import SignUpPage from "pages/SignUpPage";
@@ -33,6 +34,7 @@ const AuthorizedRoutes = ({ authUser }) => {
         component={TriviaSessionPage}
       />
       <Route exact path={ROUTES.CATEGORY.routePath} component={CategoryPage} />
+      <Route exact path={ROUTES.QUESTION.routePath} component={QuestionPage} />
       <Route exact path={ROUTES.ACCOUNT} component={AccountPage} />
       <Route path={ROUTES.LANDING} component={TriviaSessionsPage} />
     </Switch>

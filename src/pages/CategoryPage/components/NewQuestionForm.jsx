@@ -15,7 +15,6 @@ import words from "lodash/words";
 
 import { firestore } from "components/Firebase";
 import { docDataWithId } from "functions/firestoreHelpers";
-import * as ROUTES from "constants/routes";
 import type { QuestionType } from "types/QuestionTypes";
 
 const NewQuestionForm = ({

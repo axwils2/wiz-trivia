@@ -12,7 +12,6 @@ import Typography from "@material-ui/core/Typography";
 import IconButton from "@material-ui/core/IconButton";
 import ArrowUpwardIcon from "@material-ui/icons/ArrowUpward";
 import ArrowDownwardIcon from "@material-ui/icons/ArrowDownward";
-import sortedUniq from "lodash/sortedUniq";
 import orderBy from "lodash/orderBy";
 import max from "lodash/max";
 import find from "lodash/find";
