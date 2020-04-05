@@ -1,119 +1,17 @@
 // @flow
-import React, { Component } from "react";
-import { Link, withRouter } from "react-router-dom";
-import { compose } from "recompose";
-import { withFirebase } from "components/Firebase";
-import * as ROUTES from "constants/routes";
+import React from "react";
+import Container from "@material-ui/core/Container";
+import Typography from "@material-ui/core/Typography";
+
+import { SignUpForm } from "./components";
 
 const SignUpPage = () => (
-  <div>
-    <h1>SignUp</h1>
+  <Container maxWidth={"xs"}>
+    <Typography variant={"h4"} gutterBottom align={"center"}>
+      Sign Up
+    </Typography>
     <SignUpForm />
-  </div>
+  </Container>
 );
 
-const INITIAL_STATE = {
-  username: "",
-  email: "",
-  passwordOne: "",
-  passwordTwo: "",
-  error: null
-};
-
-const ERROR_CODE_ACCOUNT_EXISTS = "auth/email-already-in-use";
-const ERROR_MSG_ACCOUNT_EXISTS =
-  "An account with this E-Mail address already exists.";
-
-class SignUpFormBase extends Component {
-  constructor(props) {
-    super(props);
-
-    this.state = { ...INITIAL_STATE };
-  }
-  onSubmit = event => {
-    const { username, email, passwordOne } = this.state;
-    this.props.firebase.auth
-      .doCreateUserWithEmailAndPassword(email, passwordOne)
-      .then(authUser => {
-        // Create a user in your Firebase realtime database
-        return this.props.firebase.firestore.user(authUser.user.uid).set({
-          name: username,
-          email
-        });
-      })
-      .then(() => {
-        return this.props.firebase.auth.doSendEmailVerification();
-      })
-      .then(() => {
-        this.setState({ ...INITIAL_STATE });
-        this.props.history.push(ROUTES.TRIVIA_SESSIONS);
-      })
-      .catch(error => {
-        if (error.code === ERROR_CODE_ACCOUNT_EXISTS) {
-          error.message = ERROR_MSG_ACCOUNT_EXISTS;
-        }
-        this.setState({ error });
-      });
-    event.preventDefault();
-  };
-  onChange = event => {
-    this.setState({ [event.target.name]: event.target.value });
-  };
-  onChangeCheckbox = event => {
-    this.setState({ [event.target.name]: event.target.checked });
-  };
-  render() {
-    const { username, email, passwordOne, passwordTwo, error } = this.state;
-    const isInvalid =
-      passwordOne !== passwordTwo ||
-      passwordOne === "" ||
-      email === "" ||
-      username === "";
-
-    return (
-      <form onSubmit={this.onSubmit}>
-        <input
-          name="username"
-          value={username}
-          onChange={this.onChange}
-          type="text"
-          placeholder="Full Name"
-        />
-        <input
-          name="email"
-          value={email}
-          onChange={this.onChange}
-          type="text"
-          placeholder="Email Address"
-        />
-        <input
-          name="passwordOne"
-          value={passwordOne}
-          onChange={this.onChange}
-          type="password"
-          placeholder="Password"
-        />
-        <input
-          name="passwordTwo"
-          value={passwordTwo}
-          onChange={this.onChange}
-          type="password"
-          placeholder="Confirm Password"
-        />
-        <button type="submit" disabled={isInvalid}>
-          Sign Up
-        </button>
-        {error && <p>{error.message}</p>}
-      </form>
-    );
-  }
-}
-const SignUpLink = () => (
-  <p>
-    Dont have an account? <Link to={ROUTES.SIGN_UP}>Sign Up</Link>
-  </p>
-);
-
-const SignUpForm = compose(withRouter, withFirebase)(SignUpFormBase);
 export default SignUpPage;
-export { SignUpForm, SignUpLink };

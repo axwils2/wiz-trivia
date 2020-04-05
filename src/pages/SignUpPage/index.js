@@ -1,5 +1,5 @@
 // @flow
-import { SignUpLink } from "./SignUpPage";
+import { SignUpLink } from "./components";
 
 export { default } from "./SignUpPage";
 export { SignUpLink };

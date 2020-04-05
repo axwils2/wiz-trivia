@@ -49,7 +49,7 @@ const SignInForm = ({ history }: { history: * }) => {
       />
       <Button
         disabled={invalid}
-        type={"submmit"}
+        type={"submit"}
         variant={"contained"}
         size={"large"}
         color={"primary"}

@@ -10,11 +10,7 @@ const LandingPage = () => {
   const [teamName, setTeamName] = useState("");
   const invalid = accessCode === "" || teamName === "";
 
-  const startSession = () => {
-    console.log("startSession");
-    console.log(accessCode);
-    console.log(teamName);
-  };
+  const startSession = () => {};
 
   return (
     <Container maxWidth={"sm"}>
