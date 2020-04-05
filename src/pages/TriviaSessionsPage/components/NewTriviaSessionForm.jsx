@@ -6,6 +6,7 @@ import Typography from "@material-ui/core/Typography";
 import TextField from "@material-ui/core/TextField";
 import Container from "@material-ui/core/Container";
 import toUpper from "lodash/toUpper";
+import toLower from "lodash/toLower";
 
 import { AuthUserContext } from "components/Session";
 import { firestore } from "components/Firebase";
@@ -23,7 +24,8 @@ const NewTriviaSessionForm = ({ history }: { history: * }) => {
       .add({
         accessCode,
         name,
-        status: "draft",
+        nameInsensitive: toLower(name),
+        active: false,
         userId: authUser.uid,
         createdAt: firestore.timestamp()
       })

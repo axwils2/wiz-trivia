@@ -6,7 +6,7 @@ import Container from "@material-ui/core/Container";
 import Typography from "@material-ui/core/Typography";
 
 import { withAuthorization, withEmailVerification } from "components/Session";
-import { TriviaSessionsList, NewTriviaSessionModal } from "./components";
+import { TriviaSessionsTable, NewTriviaSessionModal } from "./components";
 
 const useStyles = makeStyles(theme => ({
   header: {
@@ -24,10 +24,10 @@ const TriviaSessionsPage = () => {
   return (
     <Container maxWidth={"md"}>
       <div className={classes.header}>
-        <Typography variant={"h4"}>Sessions</Typography>
+        <Typography variant={"h4"}>Sessions (Limit 10)</Typography>
         <NewTriviaSessionModal />
       </div>
-      <TriviaSessionsList />
+      <TriviaSessionsTable />
     </Container>
   );
 };

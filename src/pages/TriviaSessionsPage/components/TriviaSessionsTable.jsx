@@ -56,7 +56,9 @@ const TriviaSessionsList = () => {
                 {session.name}
               </TableCell>
               <TableCell align="right">{session.accessCode}</TableCell>
-              <TableCell align="right">{session.status}</TableCell>
+              <TableCell align="right">
+                {session.active ? "active" : "disabled"}
+              </TableCell>
               <TableCell align="right">
                 <ButtonLink
                   to={ROUTES.TRIVIA_SESSION.linkPath(session.uid)}

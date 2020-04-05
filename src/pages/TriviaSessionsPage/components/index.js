@@ -1,5 +1,5 @@
 // @flow
-import TriviaSessionsList from "./TriviaSessionsList";
+import TriviaSessionsTable from "./TriviaSessionsTable";
 import NewTriviaSessionModal from "./NewTriviaSessionModal";
 
-export { TriviaSessionsList, NewTriviaSessionModal };
+export { TriviaSessionsTable, NewTriviaSessionModal };
