@@ -9,8 +9,14 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
+import IconButton from "@material-ui/core/IconButton";
+import ArrowUpwardIcon from "@material-ui/icons/ArrowUpward";
+import ArrowDownwardIcon from "@material-ui/icons/ArrowDownward";
 import sortedUniq from "lodash/sortedUniq";
+import orderBy from "lodash/orderBy";
 import max from "lodash/max";
+import find from "lodash/find";
+import findIndex from "lodash/findIndex";
 
 import { firestore } from "components/Firebase";
 import { mapQuerySnapshot } from "functions/firestoreHelpers";
@@ -26,6 +32,9 @@ const useStyles = makeStyles(theme => ({
     alignItems: "center",
     flex: 1,
     paddingBottom: theme.spacing(2)
+  },
+  orderCell: {
+    width: "104px"
   }
 }));
 
@@ -51,32 +60,94 @@ const CategoriesTable = ({
     [triviaSession.uid]
   );
 
-  const newOrderValue = () => {
-    const maxOrder = max(categories.map(category => category.order)) || 0;
-    return maxOrder + 1;
+  const updateCategoryOrders = (oldOrder: number, newOrder: number) => {
+    const categoryMoved = find(
+      categories,
+      category => category.order === oldOrder
+    );
+    const movedIndex = findIndex(
+      categories,
+      category => category.uid === categoryMoved.uid
+    );
+    const categoryReplaced = find(
+      categories,
+      category => category.order === newOrder
+    );
+    const replacedIndex = findIndex(
+      categories,
+      category => category.uid === categoryReplaced.uid
+    );
+
+    updateCategory(categoryMoved.uid, { order: newOrder }).then(() => {
+      updateCategory(categoryReplaced.uid, { order: oldOrder }).then(() => {
+        const newCategories = Array.from(categories);
+        newCategories[movedIndex] = {
+          ...newCategories[movedIndex],
+          order: newOrder
+        };
+        newCategories[replacedIndex] = {
+          ...newCategories[replacedIndex],
+          order: oldOrder
+        };
+
+        setCategories(newCategories);
+      });
+    });
+  };
+
+  const updateCategory = (uid: string, updates: *) => {
+    return firestore.category(triviaSession.uid, uid).update(updates);
+  };
+
+  const maxOrder = () => {
+    return max(categories.map(category => category.order)) || 0;
   };
 
   return (
     <>
       <div className={classes.header}>
         <Typography variant={"h4"}>Session Categories</Typography>
-        <NewCategoryModal newOrderValue={newOrderValue()} />
+        <NewCategoryModal newOrderValue={maxOrder() + 1} />
       </div>
       <TableContainer component={Paper}>
         <Table aria-label="simple table">
           <TableHead>
             <TableRow>
-              <TableCell>Order</TableCell>
+              <TableCell className={classes.orderCell}>Order</TableCell>
               <TableCell>Name</TableCell>
               <TableCell align="right">Wager Amounts</TableCell>
-              <TableCell align="right" />
+              <TableCell />
             </TableRow>
           </TableHead>
           <TableBody>
-            {categories.map(category => (
+            {orderBy(categories, ["order"], ["asc"]).map(category => (
               <TableRow key={category.uid}>
-                <TableCell component="th" scope="row">
+                <TableCell className={classes.orderCell}>
                   {category.order}
+                  {category.order !== 1 && (
+                    <IconButton
+                      color={"inherit"}
+                      aria-label={"moveUp"}
+                      size={"small"}
+                      onClick={() =>
+                        updateCategoryOrders(category.order, category.order - 1)
+                      }
+                    >
+                      <ArrowUpwardIcon />
+                    </IconButton>
+                  )}
+                  {category.order !== maxOrder() && (
+                    <IconButton
+                      color={"inherit"}
+                      aria-label={"moveDown"}
+                      size={"small"}
+                      onClick={() =>
+                        updateCategoryOrders(category.order, category.order + 1)
+                      }
+                    >
+                      <ArrowDownwardIcon />
+                    </IconButton>
+                  )}
                 </TableCell>
                 <TableCell component="th" scope="row">
                   {category.name}
