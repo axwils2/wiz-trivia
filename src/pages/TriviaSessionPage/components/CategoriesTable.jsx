@@ -115,7 +115,7 @@ const CategoriesTable = ({
             <TableRow>
               <TableCell className={classes.orderCell}>Order</TableCell>
               <TableCell>Name</TableCell>
-              <TableCell align="right">Wager Amounts</TableCell>
+              <TableCell align="right">Wager Type</TableCell>
               <TableCell />
             </TableRow>
           </TableHead>
@@ -152,9 +152,7 @@ const CategoriesTable = ({
                 <TableCell component="th" scope="row">
                   {category.name}
                 </TableCell>
-                <TableCell align="right">
-                  {sortedUniq(category.wagerAmounts).join(", ")}
-                </TableCell>
+                <TableCell align="right">{category.wagerType}</TableCell>
                 <TableCell align="right">
                   <ButtonLink
                     to={ROUTES.CATEGORY.linkPath(

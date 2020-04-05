@@ -5,6 +5,11 @@ import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
 import TextField from "@material-ui/core/TextField";
 import Container from "@material-ui/core/Container";
+import Radio from "@material-ui/core/Radio";
+import RadioGroup from "@material-ui/core/RadioGroup";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
+import FormControl from "@material-ui/core/FormControl";
+import FormLabel from "@material-ui/core/FormLabel";
 import toLower from "lodash/toLower";
 
 import { firestore } from "components/Firebase";
@@ -20,7 +25,8 @@ const NewCategoryForm = ({
   newOrderValue: number
 }) => {
   const [name, setName] = useState("");
-  const invalid = name === "";
+  const [wagerType, setWagerType] = useState(null);
+  const invalid = name === "" || !wagerType;
   const triviaSessionUid = match.params.triviaSessionUid;
 
   const createCategory = () => {
@@ -30,7 +36,8 @@ const NewCategoryForm = ({
         name,
         nameInsensitive: toLower(name),
         createdAt: firestore.timestamp(),
-        order: newOrderValue || 0
+        order: newOrderValue || 0,
+        wagerType
       })
       .then(docRef => {
         history.push(ROUTES.CATEGORY.linkPath(triviaSessionUid, docRef.id));
@@ -49,6 +56,31 @@ const NewCategoryForm = ({
         value={name}
         fullWidth
       />
+      <FormControl component="fieldset">
+        <FormLabel component="legend">Wager Type</FormLabel>
+        <RadioGroup
+          aria-label="wager type"
+          name="wagerType"
+          value={wagerType}
+          onChange={e => setWagerType(e.target.value)}
+        >
+          <FormControlLabel
+            value="one_through_six"
+            control={<Radio />}
+            label="1-6"
+          />
+          <FormControlLabel
+            value="up_to_twenty_five"
+            control={<Radio />}
+            label="Up To 25"
+          />
+          <FormControlLabel
+            value="admin_choice"
+            control={<Radio />}
+            label="Admin Choice"
+          />
+        </RadioGroup>
+      </FormControl>
       <Button
         disabled={invalid}
         variant={"contained"}
