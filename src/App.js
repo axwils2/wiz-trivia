@@ -62,7 +62,7 @@ const App = () => {
       <TeamProvider>
         <Router>
           <AppBar />
-          <div style={{ paddingTop: "16px" }}>
+          <div style={{ padding: "16px 0 48px" }}>
             <AuthorizedRoutes authUser={authUser} />
             <UnauthrorizedRoutes authUser={authUser} />
           </div>

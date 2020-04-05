@@ -14,7 +14,7 @@ import { mapQuerySnapshot } from "functions/firestoreHelpers";
 import ButtonLink from "components/ButtonLink";
 import * as ROUTES from "constants/routes";
 
-const TriviaSessionsList = () => {
+const TriviaSessionsTable = () => {
   const authUser = useContext(AuthUserContext);
   const [sessions, setSessions] = useState([]);
 
@@ -77,4 +77,4 @@ const TriviaSessionsList = () => {
   );
 };
 
-export default TriviaSessionsList;
+export default TriviaSessionsTable;
