@@ -7,7 +7,7 @@ import { TriviaSessionProvider } from "components/TriviaSessionContext";
 import { TeamProvider } from "components/TeamContext";
 import AppBar from "components/AppBar";
 import LandingPage from "pages/LandingPage";
-import AdminPage from "pages/AdminPage";
+import TriviaSessionsPage from "pages/TriviaSessionsPage";
 import AccountPage from "pages/AccountPage";
 import SignInPage from "pages/SignInPage";
 import SignUpPage from "pages/SignUpPage";
@@ -20,9 +20,13 @@ const AuthorizedRoutes = ({ authUser }) => {
 
   return (
     <Switch>
-      <Route exact path={ROUTES.ADMIN} component={AdminPage} />
+      <Route
+        exact
+        path={ROUTES.TRIVIA_SESSIONS}
+        component={TriviaSessionsPage}
+      />
       <Route exact path={ROUTES.ACCOUNT} component={AccountPage} />
-      <Route path={ROUTES.LANDING} component={AdminPage} />
+      <Route path={ROUTES.LANDING} component={TriviaSessionsPage} />
     </Switch>
   );
 };
