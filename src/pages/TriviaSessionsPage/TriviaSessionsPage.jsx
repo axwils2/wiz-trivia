@@ -1,6 +1,5 @@
 // @flow
 import React from "react";
-import { Switch, Route, Link } from "react-router-dom";
 import { compose } from "recompose";
 import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
@@ -8,7 +7,6 @@ import Typography from "@material-ui/core/Typography";
 
 import { withAuthorization, withEmailVerification } from "components/Session";
 import { TriviaSessionsList, NewTriviaSessionModal } from "./components";
-import * as ROUTES from "constants/routes";
 
 const useStyles = makeStyles(theme => ({
   header: {

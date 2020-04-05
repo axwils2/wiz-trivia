@@ -2,6 +2,7 @@
 import React, { useContext, useState } from "react";
 import { AppBar as MUIAppBar } from "@material-ui/core";
 import Toolbar from "@material-ui/core/Toolbar";
+import Container from "@material-ui/core/Container";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 import IconButton from "@material-ui/core/IconButton";
@@ -32,27 +33,29 @@ const AppBar = () => {
   return (
     <div className={"root"}>
       <MUIAppBar position={"static"}>
-        <Toolbar>
-          {authUser && (
-            <IconButton
-              edge={"start"}
-              className={classes.menuButton}
-              color={"inherit"}
-              aria-label={"menu"}
-              onClick={() => setOpen(true)}
-            >
-              <MenuIcon />
-            </IconButton>
-          )}
-          <Typography variant={"h6"} className={classes.title}>
-            Wiz Trivia
-          </Typography>
-          {authUser && (
-            <Button color={"inherit"} onClick={doSignOut}>
-              Logout
-            </Button>
-          )}
-        </Toolbar>
+        <Container maxWidth={"md"}>
+          <Toolbar disableGutters>
+            {authUser && (
+              <IconButton
+                edge={"start"}
+                className={classes.menuButton}
+                color={"inherit"}
+                aria-label={"menu"}
+                onClick={() => setOpen(true)}
+              >
+                <MenuIcon />
+              </IconButton>
+            )}
+            <Typography variant={"h6"} className={classes.title}>
+              Wiz Trivia
+            </Typography>
+            {authUser && (
+              <Button color={"inherit"} onClick={doSignOut}>
+                Logout
+              </Button>
+            )}
+          </Toolbar>
+        </Container>
       </MUIAppBar>
       <SideDrawer open={open} onClose={() => setOpen(false)} />
     </div>
