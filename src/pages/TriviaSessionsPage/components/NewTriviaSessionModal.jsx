@@ -30,7 +30,7 @@ const NewTriviaSessionModal = () => {
 
   return (
     <>
-      <Button variant={"contained"} onClick={handleOpen}>
+      <Button variant={"contained"} color={"primary"} onClick={handleOpen}>
         Create New Session
       </Button>
       <Modal
