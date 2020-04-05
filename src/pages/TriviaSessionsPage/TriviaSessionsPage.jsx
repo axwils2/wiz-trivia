@@ -1,5 +1,5 @@
 // @flow
-import React, { Component } from "react";
+import React from "react";
 import { Switch, Route, Link } from "react-router-dom";
 import { compose } from "recompose";
 import Container from "@material-ui/core/Container";

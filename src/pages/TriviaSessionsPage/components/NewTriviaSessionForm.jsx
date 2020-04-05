@@ -24,7 +24,8 @@ const NewTriviaSessionForm = ({ history }: { history: * }) => {
         accessCode,
         name,
         status: "draft",
-        userId: authUser.uid
+        userId: authUser.uid,
+        createdAt: firestore.timestamp()
       })
       .then(docRef => {
         history.push(ROUTES.TRIVIA_SESSION.linkPath(docRef.id));
