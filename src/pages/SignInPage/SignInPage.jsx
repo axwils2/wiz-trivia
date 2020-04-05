@@ -1,8 +1,9 @@
+// @flow
 import React, { Component } from "react";
 import { withRouter } from "react-router-dom";
 import { compose } from "recompose";
-import { SignUpLink } from "pages/SignUp";
-import { PasswordForgetLink } from "pages/PasswordForget";
+import { SignUpLink } from "pages/SignUpPage";
+import { PasswordForgetLink } from "pages/PasswordForgetPage";
 import { withFirebase } from "components/Firebase";
 import * as ROUTES from "constants/routes";
 const SignInPage = () => (
@@ -29,7 +30,7 @@ class SignInFormBase extends Component {
       .doSignInWithEmailAndPassword(email, password)
       .then(() => {
         this.setState({ ...INITIAL_STATE });
-        this.props.history.push(ROUTES.HOME);
+        this.props.history.push(ROUTES.ADMIN);
       })
       .catch(error => {
         this.setState({ error });
