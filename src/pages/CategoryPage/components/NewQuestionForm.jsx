@@ -24,7 +24,7 @@ const NewQuestionForm = ({
 }: {
   match: *,
   newOrderValue: number,
-  afterCreate: (question: QuestionType) => {}
+  afterCreate: (question: QuestionType) => void
 }) => {
   const [body, setBody] = useState("");
   const [answer, setAnswer] = useState("");
@@ -55,6 +55,7 @@ const NewQuestionForm = ({
       .then(docRef => {
         docRef.get().then(doc => {
           const question = docDataWithId(doc);
+
           afterCreate(question);
         });
       });

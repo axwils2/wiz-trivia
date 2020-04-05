@@ -28,7 +28,7 @@ const NewQuestionModal = ({
   afterQuestionCreate
 }: {
   newOrderValue: number,
-  afterQuestionCreate: (question: QuestionType) => {}
+  afterQuestionCreate: (question: QuestionType) => void
 }) => {
   const [open, setOpen] = useState(false);
   const classes = useStyles();
@@ -37,6 +37,8 @@ const NewQuestionModal = ({
   const handleOpen = () => setOpen(true);
 
   const afterCreate = (question: QuestionType) => {
+    if (!question) return null;
+
     handleClose();
     afterQuestionCreate(question);
   };

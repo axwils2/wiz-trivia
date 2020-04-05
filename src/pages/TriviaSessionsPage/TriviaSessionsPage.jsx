@@ -4,6 +4,7 @@ import { compose } from "recompose";
 import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
 import Typography from "@material-ui/core/Typography";
+import Breadcrumbs from "@material-ui/core/Breadcrumbs";
 
 import { withAuthorization, withEmailVerification } from "components/Session";
 import { TriviaSessionsTable, NewTriviaSessionModal } from "./components";
@@ -23,6 +24,9 @@ const TriviaSessionsPage = () => {
 
   return (
     <Container maxWidth={"md"}>
+      <Breadcrumbs aria-label={"breadcrumbs"}>
+        <Typography>Sessions</Typography>
+      </Breadcrumbs>
       <div className={classes.header}>
         <Typography variant={"h4"}>Sessions (Limit 10)</Typography>
         <NewTriviaSessionModal />
