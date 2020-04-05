@@ -15,3 +15,10 @@ export const CATEGORY = {
   linkPath: (triviaSessionUid: string, uid: string) =>
     `/sessions/${triviaSessionUid}/categories/${uid}`
 };
+
+export const QUESTION = {
+  routePath:
+    "/sessions/:triviaSessionUid/categories/:categoryUid/questions/:questionUid",
+  linkPath: (triviaSessionUid: string, categoryUid: string, uid: string) =>
+    `/sessions/${triviaSessionUid}/categories/${categoryUid}/questions/${uid}`
+};
