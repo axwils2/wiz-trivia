@@ -46,7 +46,11 @@ const AppBar = () => {
                 <MenuIcon />
               </IconButton>
             )}
-            <Typography variant={"h6"} className={classes.title}>
+            <Typography
+              variant={"h6"}
+              className={classes.title}
+              align={authUser ? "left" : "center"}
+            >
               Wiz Trivia
             </Typography>
             {authUser && (
