@@ -8,7 +8,6 @@ import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
-import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 import FolderIcon from "@material-ui/icons/Folder";
 
 import * as ROUTES from "constants/routes";
@@ -45,14 +44,6 @@ const SideDrawer = ({
             </ListItem>
           </Link>
           <Divider />
-          <Link to={ROUTES.ACCOUNT} className={classes.link}>
-            <ListItem button>
-              <ListItemIcon>
-                <AccountCircleIcon />
-              </ListItemIcon>
-              <ListItemText primary={"Account"} />
-            </ListItem>
-          </Link>
         </List>
       </div>
     </Drawer>
