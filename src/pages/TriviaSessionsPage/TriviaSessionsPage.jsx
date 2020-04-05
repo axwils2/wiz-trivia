@@ -3,15 +3,17 @@ import React, { Component } from "react";
 import { Switch, Route, Link } from "react-router-dom";
 import { compose } from "recompose";
 import Container from "@material-ui/core/Container";
+import Typography from "@material-ui/core/Typography";
 
 import { withAuthorization, withEmailVerification } from "components/Session";
-import { TriviaSessionsList } from "./components";
+import { TriviaSessionsList, NewTriviaSessionModal } from "./components";
 import * as ROUTES from "constants/routes";
 
 const TriviaSessionsPage = () => (
   <Container maxWidth={"md"}>
-    <h1>Sessions</h1>
+    <Typography variant={"h4"}>Sessions</Typography>
     <TriviaSessionsList />
+    <NewTriviaSessionModal />
   </Container>
 );
 

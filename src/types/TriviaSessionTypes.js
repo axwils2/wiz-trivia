@@ -1,5 +1,9 @@
 // @flow
-export type TriviaSessionStatusType = "active" | "accepting" | "closed";
+export type TriviaSessionStatusType =
+  | "active"
+  | "accepting"
+  | "closed"
+  | "draft";
 export type TriviaSessionType = {
   uid: string,
   accessCode: ?string,

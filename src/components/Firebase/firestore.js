@@ -1,5 +1,5 @@
 // @flow
-import { firestore } from "./firebase";
+import { firestore, timestamp as firebaseTimestamp } from "./firebase";
 
 export const users = () => firestore.collection("users");
 export const user = (uid: string) => users().doc(uid);
@@ -24,3 +24,5 @@ export const question = (
   categoryUid: string,
   uid: string
 ) => questions(triviaSessionUid, categoryUid).doc(uid);
+
+export const timestamp = () => firebaseTimestamp();

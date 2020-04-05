@@ -8,6 +8,7 @@ import { TeamProvider } from "components/TeamContext";
 import AppBar from "components/AppBar";
 import LandingPage from "pages/LandingPage";
 import TriviaSessionsPage from "pages/TriviaSessionsPage";
+import TriviaSessionPage from "pages/TriviaSessionPage";
 import AccountPage from "pages/AccountPage";
 import SignInPage from "pages/SignInPage";
 import SignUpPage from "pages/SignUpPage";
@@ -24,6 +25,11 @@ const AuthorizedRoutes = ({ authUser }) => {
         exact
         path={ROUTES.TRIVIA_SESSIONS}
         component={TriviaSessionsPage}
+      />
+      <Route
+        exact
+        path={ROUTES.TRIVIA_SESSION.routePath}
+        component={TriviaSessionPage}
       />
       <Route exact path={ROUTES.ACCOUNT} component={AccountPage} />
       <Route path={ROUTES.LANDING} component={TriviaSessionsPage} />
@@ -56,8 +62,10 @@ const App = () => {
       <TeamProvider>
         <Router>
           <AppBar />
-          <AuthorizedRoutes authUser={authUser} />
-          <UnauthrorizedRoutes authUser={authUser} />
+          <div style={{ paddingTop: "16px" }}>
+            <AuthorizedRoutes authUser={authUser} />
+            <UnauthrorizedRoutes authUser={authUser} />
+          </div>
         </Router>
       </TeamProvider>
     </TriviaSessionProvider>
