@@ -5,12 +5,26 @@ import TextField from "@material-ui/core/TextField";
 import Container from "@material-ui/core/Container";
 import toUpper from "lodash/toUpper";
 
+import { firestore } from "components/Firebase";
+import { mapQuerySnapshot } from "functions/firestoreHelpers";
+
 const LandingPage = () => {
   const [accessCode, setAccessCode] = useState("");
   const [teamName, setTeamName] = useState("");
   const invalid = accessCode === "" || teamName === "";
 
-  const startSession = () => {};
+  const startSession = () => {
+    firestore
+      .triviaSessions()
+      .where("status", "==", "active")
+      .where("accessCode", "==", accessCode)
+      .limit(1)
+      .get()
+      .then(querySnapshot => {
+        const session = mapQuerySnapshot(querySnapshot)[0];
+        console.log(session);
+      });
+  };
 
   return (
     <Container maxWidth={"sm"}>

@@ -1,5 +1,6 @@
 // @flow
 import React, { useState, useEffect, useContext } from "react";
+import { withRouter } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
@@ -8,6 +9,7 @@ import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
+import Button from "@material-ui/core/Button";
 
 import { firestore } from "components/Firebase";
 import { AuthUserContext } from "components/Session";
@@ -22,7 +24,7 @@ const useStyles = makeStyles({
   }
 });
 
-const TriviaSessionsTable = () => {
+const TriviaSessionsTable = ({ history }: { history: * }) => {
   const classes = useStyles();
   const authUser = useContext(AuthUserContext);
   const [sessions, setSessions] = useState([]);
@@ -42,6 +44,15 @@ const TriviaSessionsTable = () => {
     },
     [authUser.uid]
   );
+
+  const activateSession = (uid: string) => {
+    firestore
+      .triviaSession(uid)
+      .update({ status: "active" })
+      .then(() => {
+        history.push(ROUTES.ACTIVE_TRIVIA_SESSION.linkPath(uid));
+      });
+  };
 
   if (sessions.length === 0) {
     return <div>No sessions to display. Create some!</div>;
@@ -69,14 +80,14 @@ const TriviaSessionsTable = () => {
               <TableCell align="right">{session.status}</TableCell>
               <TableCell align="right" className={classes.smallCell}>
                 {session.status !== "complete" && (
-                  <ButtonLink
-                    to={ROUTES.ACTIVE_TRIVIA_SESSION.linkPath(session.uid)}
+                  <Button
+                    onClick={() => activateSession(session.uid)}
                     variant={"contained"}
                     size={"small"}
                     color={"primary"}
                   >
-                    START
-                  </ButtonLink>
+                    {session.status === "disabled" ? "Start" : "View"}
+                  </Button>
                 )}
               </TableCell>
               <TableCell align="right" className={classes.smallCell}>
@@ -97,4 +108,4 @@ const TriviaSessionsTable = () => {
   );
 };
 
-export default TriviaSessionsTable;
+export default withRouter(TriviaSessionsTable);
