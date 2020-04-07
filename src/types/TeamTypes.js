@@ -1,16 +1,20 @@
 // @flow
-export type TeamAnswerStatusType = "pending" | "incorrect" | "correct";
+export type TeamAnswerStatusType =
+  | "draft"
+  | "pending"
+  | "incorrect"
+  | "correct";
 
 export type TeamAnswerType = {
   body: ?string,
-  catgoryId: string,
-  questionId: string,
+  categoryUid: string,
+  questionUid: string,
   status: TeamAnswerStatusType,
-  wagerAmount: number
+  wagerAmount: ?number
 };
 
 export type TeamCategoryWagerAmountType = {
-  categoryId: string,
+  categoryUid: string,
   wagerAmountsRemaining: Array<number>
 };
 

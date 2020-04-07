@@ -65,17 +65,17 @@ const NewCategoryForm = ({
           onChange={e => setWagerType(e.target.value)}
         >
           <FormControlLabel
-            value="one_through_six"
+            value="oneThroughSix"
             control={<Radio />}
             label="1-6"
           />
           <FormControlLabel
-            value="up_to_twenty_five"
+            value="upToTwentyFive"
             control={<Radio />}
             label="Up To 25"
           />
           <FormControlLabel
-            value="admin_choice"
+            value="adminChoice"
             control={<Radio />}
             label="Admin Choice"
           />

@@ -1,8 +1,8 @@
 // @flow
 export type CategoryWagerType =
-  | "up_to_twenty_five"
-  | "one_through_six"
-  | "admin_choice";
+  | "upToTwentyFive"
+  | "oneThroughSix"
+  | "adminChoice";
 export type CategoryType = {
   uid: string,
   name: string,

@@ -1,11 +1,14 @@
 // @flow
+import type { CategoryType } from "types/CategoryTypes";
+import type { QuestionType } from "types/QuestionTypes";
+
 export type TriviaSessionStatusType = "active" | "disabled" | "complete";
 
 export type TriviaSessionType = {
   uid: string,
   accessCode: ?string,
-  currentCategoryId: ?string,
-  currentQuestionId: ?string,
+  currentCategory: ?CategoryType,
+  currentQuestion: ?QuestionType,
   name: ?string,
   status: TriviaSessionStatusType,
   userId: string,

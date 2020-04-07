@@ -7,6 +7,7 @@ import Typography from "@material-ui/core/Typography";
 
 import { firestore } from "components/Firebase";
 import { docDataWithId } from "functions/firestoreHelpers";
+import { CurrentQuestion } from "./components";
 
 const cookies = new Cookies();
 
@@ -62,22 +63,32 @@ const PlayerActiveSession = () => {
         <CircularProgress />
       </Box>
     );
+
   if (!triviaSession || !team)
     return <Typography>Error loading data</Typography>;
+
   if (triviaSession.status !== "active")
     return (
       <Typography>
         This trivia session is either disabled or complete!
       </Typography>
     );
-  if (!triviaSession.currentQuestion)
+
+  if (!triviaSession.currentQuestion || !triviaSession.currentCategory)
     return (
       <Typography variant={"h6"}>
         {triviaSession.waitingMessage || "Please wait for the session to begin"}
       </Typography>
     );
 
-  return <Box />;
+  return (
+    <CurrentQuestion
+      team={team}
+      triviaSessionUid={triviaSession.uid}
+      currentQuestion={triviaSession.currentQuestion}
+      currentCategory={triviaSession.currentCategory}
+    />
+  );
 };
 
 export default PlayerActiveSession;
