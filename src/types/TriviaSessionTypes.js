@@ -8,5 +8,6 @@ export type TriviaSessionType = {
   currentQuestionId: ?string,
   name: ?string,
   status: TriviaSessionStatusType,
-  userId: string
+  userId: string,
+  waitingMessage: ?string
 };

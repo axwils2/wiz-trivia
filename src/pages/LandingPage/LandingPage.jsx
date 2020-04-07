@@ -1,17 +1,34 @@
 // @flow
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { withRouter } from "react-router-dom";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import Container from "@material-ui/core/Container";
 import toUpper from "lodash/toUpper";
+import Cookies from "universal-cookie";
 
 import { firestore } from "components/Firebase";
 import { mapQuerySnapshot } from "functions/firestoreHelpers";
+import * as ROUTES from "constants/routes";
 
-const LandingPage = () => {
+const cookies = new Cookies();
+
+const LandingPage = ({ history }: { history: * }) => {
   const [accessCode, setAccessCode] = useState("");
   const [teamName, setTeamName] = useState("");
   const invalid = accessCode === "" || teamName === "";
+
+  useEffect(
+    () => {
+      const cookie = cookies.get("wizTriviaSessionData");
+      if (!cookie || !cookie.triviaSessionUid) return;
+
+      history.push(
+        ROUTES.ACTIVE_TRIVIA_SESSION.linkPath(cookie.triviaSessionUid)
+      );
+    },
+    [history]
+  );
 
   const startSession = () => {
     firestore
@@ -22,7 +39,35 @@ const LandingPage = () => {
       .get()
       .then(querySnapshot => {
         const session = mapQuerySnapshot(querySnapshot)[0];
-        console.log(session);
+
+        firestore
+          .teams(session.uid)
+          .add({
+            name: teamName,
+            pointsTotal: 0,
+            answers: [],
+            categoryWagerAmounts: []
+          })
+          .then(docRef => {
+            let dt = new Date();
+            dt.setHours(dt.getHours() + 4);
+
+            cookies.set(
+              process.env.REACT_APP_ACTIVE_SESSION_COOKIE_NAME,
+              JSON.stringify({
+                teamUid: docRef.id,
+                triviaSessionUid: session.uid
+              }),
+              {
+                path: "/",
+                expires: dt,
+                secure: process.env.REACT_APP_SECURE_COOKIES === "true",
+                sameSite: "strict"
+              }
+            );
+
+            history.push(ROUTES.ACTIVE_TRIVIA_SESSION.linkPath(session.uid));
+          });
       });
   };
 
@@ -59,4 +104,4 @@ const LandingPage = () => {
   );
 };
 
-export default LandingPage;
+export default withRouter(LandingPage);

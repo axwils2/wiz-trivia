@@ -16,10 +16,15 @@ const UpdateTriviaSessionForm = ({
 }) => {
   const [name, setName] = useState(triviaSession.name);
   const [accessCode, setAccessCode] = useState(triviaSession.accessCode);
+  const [waitingMessage, setWaitingMessage] = useState(
+    triviaSession.waitingMessage
+  );
   const invalid = name === "" || accessCode === "";
 
   const updateTriviaSession = () => {
-    firestore.triviaSession(triviaSession.uid).update({ name, accessCode });
+    firestore
+      .triviaSession(triviaSession.uid)
+      .update({ name, accessCode, waitingMessage });
   };
 
   return (
@@ -41,6 +46,15 @@ const UpdateTriviaSessionForm = ({
         onChange={e => setAccessCode(toUpper(e.target.value))}
         margin={"normal"}
         value={accessCode}
+        fullWidth
+      />
+      <TextField
+        id={"WaitingMessage"}
+        label="Waiting Message"
+        variant="outlined"
+        onChange={e => setWaitingMessage(e.target.value)}
+        margin={"normal"}
+        defaultValue={waitingMessage}
         fullWidth
       />
       <Button

@@ -1,5 +1,6 @@
 // @flow
 import React, { useContext, useState } from "react";
+import { Link } from "react-router-dom";
 import { AppBar as MUIAppBar } from "@material-ui/core";
 import Toolbar from "@material-ui/core/Toolbar";
 import Container from "@material-ui/core/Container";
@@ -12,6 +13,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import { doSignOut } from "components/Firebase/auth";
 import { AuthUserContext } from "components/Session";
 import SideDrawer from "./SideDrawer";
+import * as ROUTES from "constants/routes";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -22,6 +24,10 @@ const useStyles = makeStyles(theme => ({
   },
   title: {
     flexGrow: 1
+  },
+  link: {
+    textDecoration: "none",
+    color: "inherit"
   }
 }));
 
@@ -46,12 +52,15 @@ const AppBar = () => {
                 <MenuIcon />
               </IconButton>
             )}
+
             <Typography
               variant={"h6"}
               className={classes.title}
               align={authUser ? "left" : "center"}
             >
-              Wiz Trivia
+              <Link to={ROUTES.LANDING} className={classes.link}>
+                Wiz Trivia
+              </Link>
             </Typography>
             {authUser && (
               <Button color={"inherit"} onClick={doSignOut}>
