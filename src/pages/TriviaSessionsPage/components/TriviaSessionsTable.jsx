@@ -1,5 +1,6 @@
 // @flow
 import React, { useState, useEffect, useContext } from "react";
+import { makeStyles } from "@material-ui/core/styles";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
@@ -14,7 +15,15 @@ import { mapQuerySnapshot } from "functions/firestoreHelpers";
 import ButtonLink from "components/ButtonLink";
 import * as ROUTES from "constants/routes";
 
+const useStyles = makeStyles({
+  smallCell: {
+    width: "100px",
+    paddingLeft: 0
+  }
+});
+
 const TriviaSessionsTable = () => {
+  const classes = useStyles();
   const authUser = useContext(AuthUserContext);
   const [sessions, setSessions] = useState([]);
 
@@ -46,7 +55,8 @@ const TriviaSessionsTable = () => {
             <TableCell>Name</TableCell>
             <TableCell align="right">Access Code</TableCell>
             <TableCell align="right">Status</TableCell>
-            <TableCell align="right" />
+            <TableCell align="right" className={classes.smallCell} />
+            <TableCell align="right" className={classes.smallCell} />
           </TableRow>
         </TableHead>
         <TableBody>
@@ -56,10 +66,20 @@ const TriviaSessionsTable = () => {
                 {session.name}
               </TableCell>
               <TableCell align="right">{session.accessCode}</TableCell>
-              <TableCell align="right">
-                {session.active ? "active" : "disabled"}
+              <TableCell align="right">{session.status}</TableCell>
+              <TableCell align="right" className={classes.smallCell}>
+                {session.status !== "complete" && (
+                  <ButtonLink
+                    to={ROUTES.ACTIVE_TRIVIA_SESSION.linkPath(session.uid)}
+                    variant={"contained"}
+                    size={"small"}
+                    color={"primary"}
+                  >
+                    START
+                  </ButtonLink>
+                )}
               </TableCell>
-              <TableCell align="right">
+              <TableCell align="right" className={classes.smallCell}>
                 <ButtonLink
                   to={ROUTES.TRIVIA_SESSION.linkPath(session.uid)}
                   variant={"contained"}

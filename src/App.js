@@ -9,6 +9,7 @@ import AppBar from "components/AppBar";
 import LandingPage from "pages/LandingPage";
 import TriviaSessionsPage from "pages/TriviaSessionsPage";
 import TriviaSessionPage from "pages/TriviaSessionPage";
+import ActiveTriviaSessionPage from "pages/ActiveTriviaSessionPage";
 import CategoryPage from "pages/CategoryPage";
 import QuestionPage from "pages/QuestionPage";
 import SignInPage from "pages/SignInPage";
@@ -34,6 +35,11 @@ const AuthorizedRoutes = ({ authUser }) => {
       />
       <Route exact path={ROUTES.CATEGORY.routePath} component={CategoryPage} />
       <Route exact path={ROUTES.QUESTION.routePath} component={QuestionPage} />
+      <Route
+        exact
+        path={ROUTES.ACTIVE_TRIVIA_SESSION.routePath}
+        component={ActiveTriviaSessionPage}
+      />
       <Route path={ROUTES.LANDING} component={TriviaSessionsPage} />
     </Switch>
   );
@@ -45,6 +51,11 @@ const UnauthrorizedRoutes = ({ authUser }) => {
   return (
     <Switch>
       <Route exact path={ROUTES.LANDING} component={LandingPage} />
+      <Route
+        exact
+        path={ROUTES.ACTIVE_TRIVIA_SESSION.routePath}
+        component={ActiveTriviaSessionPage}
+      />
       <Route exact path={ROUTES.SIGN_UP} component={SignUpPage} />
       <Route
         exact

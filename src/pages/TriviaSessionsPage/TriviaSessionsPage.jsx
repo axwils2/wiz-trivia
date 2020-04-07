@@ -28,7 +28,7 @@ const TriviaSessionsPage = () => {
         <Typography>Sessions</Typography>
       </Breadcrumbs>
       <div className={classes.header}>
-        <Typography variant={"h4"}>Sessions (Limit 10)</Typography>
+        <Typography variant={"h4"}>Sessions (Limit last 10)</Typography>
         <NewTriviaSessionModal />
       </div>
       <TriviaSessionsTable />
