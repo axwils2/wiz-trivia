@@ -5,6 +5,8 @@ import Box from "@material-ui/core/Box";
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
 import Divider from "@material-ui/core/Divider";
+import filter from "lodash/filter";
+import map from "lodash/map";
 
 import type { TeamType, TeamAnswerType } from "types/TeamTypes";
 import type { QuestionType } from "types/QuestionTypes";
@@ -95,7 +97,16 @@ const CurrentQuestion = (props: Props) => {
         {currentQuestion.body}
       </Typography>
       <Divider className={classes.divider} />
-      <AnswerSection answer={answer} updateAnswer={updateAnswer} />
+      <AnswerSection
+        answer={answer}
+        updateAnswer={updateAnswer}
+        currentQuestion={currentQuestion}
+        currentCategory={currentCategory}
+        previousCategoryWagerAmounts={map(
+          filter(team.answers, a => a.categoryUid === currentCategory.uid),
+          a => a.wagerAMount
+        )}
+      />
       <Box className={classes.buttonContainer}>
         <Button
           disabled={submitted || invalid}

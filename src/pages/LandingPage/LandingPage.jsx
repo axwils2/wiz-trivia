@@ -45,8 +45,7 @@ const LandingPage = ({ history }: { history: * }) => {
           .add({
             name: teamName,
             pointsTotal: 0,
-            answers: [],
-            categoryWagerAmounts: []
+            answers: []
           })
           .then(docRef => {
             let dt = new Date();

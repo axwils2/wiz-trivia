@@ -38,7 +38,7 @@ const UpdateQuestionForm = ({
     (optionsRequired && optionsString === "");
 
   const updateQuestion = () => {
-    const options = optionsRequired ? words(optionsString, /[^, ]+/g) : [];
+    const options = optionsRequired ? optionsString.split(", ") : [];
 
     firestore.question(triviaSessionUid, categoryUid, question.uid).update({
       body,
