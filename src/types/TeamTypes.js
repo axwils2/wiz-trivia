@@ -10,7 +10,8 @@ export type TeamAnswerType = {
   categoryUid: string,
   questionUid: string,
   status: TeamAnswerStatusType,
-  wagerAmount: ?number
+  wagerAmount: ?number,
+  wagerAwardedAmount: ?number
 };
 
 export type TeamType = {

@@ -50,7 +50,9 @@ const NewQuestionForm = ({
         order: newOrderValue || 0,
         answer,
         format,
-        options
+        options,
+        categoryUid,
+        triviaSessionUid
       })
       .then(docRef => {
         docRef.get().then(doc => {

@@ -11,5 +11,7 @@ export type QuestionType = {
   createdAt: Date,
   answer: string,
   format: QuestionFormatType,
-  options: Array<string>
+  options: Array<string>,
+  categoryUid: string,
+  triviaSessionUid: string
 };

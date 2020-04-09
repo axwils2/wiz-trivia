@@ -25,4 +25,9 @@ export const question = (
   uid: string
 ) => questions(triviaSessionUid, categoryUid).doc(uid);
 
+export const triviaSessionQuestions = (triviaSessionUid: string) =>
+  firestore
+    .collectionGroup("questions")
+    .where("triviaSessionUid", "==", triviaSessionUid);
+
 export const timestamp = () => firebaseTimestamp();
