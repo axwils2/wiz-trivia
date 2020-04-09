@@ -9,23 +9,40 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
 import Button from "@material-ui/core/Button";
+import TextField from "@material-ui/core/TextField";
 import orderBy from "lodash/orderBy";
 import find from "lodash/find";
+import findIndex from "lodash/findIndex";
+import forEach from "lodash/forEach";
+import flatten from "lodash/flatten";
 
 import { firestore } from "components/Firebase";
 import { mapQuerySnapshot } from "functions/firestoreHelpers";
 import type { TriviaSessionType } from "types/TriviaSessionTypes";
-import type { TeamType } from "types/TeamTypes";
+import type { TeamType, TeamAnswerType } from "types/TeamTypes";
 
 const initialAnswer = {
   body: null,
   wagerAmount: null,
-  wagerAwardedAmount: null
+  wagerAwardedAmount: null,
+  categoryUid: "",
+  questionUid: "",
+  status: "draft"
 };
 
 const useStyles = makeStyles({
   table: {
     marginBottom: "24px"
+  },
+  draft: {},
+  pending: {
+    backgroundColor: "#ddddd3"
+  },
+  correct: {
+    backgroundColor: "#8ee48e"
+  },
+  incorrect: {
+    backgroundColor: "#fa9797"
   }
 });
 
@@ -35,6 +52,7 @@ const SessionTable = ({
   triviaSession: TriviaSessionType
 }) => {
   const [teams, setTeams] = useState([]);
+  const [wagerAwardedAmounts, setWagerAwardedAmounts] = useState([]);
   const classes = useStyles();
   const { currentQuestion, currentCategory } = triviaSession;
 
@@ -42,15 +60,88 @@ const SessionTable = ({
     () => {
       const unsubscribe = firestore
         .teams(triviaSession.uid)
-        .get()
-        .then(querySnapshot => {
-          setTeams(mapQuerySnapshot(querySnapshot));
+        .onSnapshot(querySnapshot => {
+          const data = mapQuerySnapshot(querySnapshot);
+          setTeams(data);
+          console.log(data);
+
+          const amountsArray = flatten(
+            data.map(team => {
+              return team.answers.map(answer => {
+                return {
+                  teamUid: team.uid,
+                  questionUid: answer.questionUid,
+                  amount: defaultWagerAwardedAmount(answer)
+                };
+              });
+            })
+          );
+          console.log(amountsArray);
+          setWagerAwardedAmounts(amountsArray);
         });
 
       return () => unsubscribe();
     },
     [triviaSession.uid]
   );
+
+  const updateTeamAnswer = (team: TeamType) => {
+    if (!currentQuestion) return null;
+
+    const answers = team.answers;
+    const answer = teamAnswer(team);
+    const answerIndex = findIndex(answers, oldAnswer => oldAnswer === answer);
+    const newWagerAwardedAmountObject = find(
+      wagerAwardedAmounts,
+      amountObject =>
+        amountObject.teamUid === team.uid &&
+        amountObject.questionUid === currentQuestion.uid
+    );
+    const wagerAwardedAmount = newWagerAwardedAmountObject.amount || 0;
+    const pointsTotal = team.pointsTotal + wagerAwardedAmount;
+    console.log(pointsTotal);
+    answers[answerIndex] = {
+      ...answer,
+      wagerAwardedAmount,
+      status: newStatus(wagerAwardedAmount)
+    };
+
+    console.log(answers);
+
+    firestore
+      .team(triviaSession.uid, team.uid)
+      .update({ answers, pointsTotal });
+  };
+
+  const newStatus = (wagerAwardedAmount: ?number) => {
+    if (wagerAwardedAmount === 0) return "incorrect";
+    if (wagerAwardedAmount === null || wagerAwardedAmount === undefined)
+      return "pending";
+    return "correct";
+  };
+
+  const updateWagerAwardedAmounts = (
+    team: TeamType,
+    wagerAwardedAmount: number
+  ) => {
+    if (!currentQuestion) return null;
+
+    const safeWagerAwardedAmounts = Array.from(wagerAwardedAmounts);
+    const wagerAwardedAmountObjectIndex = findIndex(
+      wagerAwardedAmounts,
+      amountObject =>
+        amountObject.teamUid === team.uid &&
+        amountObject.questionUid === currentQuestion.uid
+    );
+    const wagerAwardedAmountObject =
+      wagerAwardedAmounts[wagerAwardedAmountObjectIndex];
+
+    wagerAwardedAmountObject["amount"] = wagerAwardedAmount;
+    safeWagerAwardedAmounts[
+      wagerAwardedAmountObjectIndex
+    ] = wagerAwardedAmountObject;
+    setWagerAwardedAmounts(safeWagerAwardedAmounts);
+  };
 
   const teamAnswer = (team: TeamType) => {
     if (!currentQuestion || !currentCategory) {
@@ -64,6 +155,18 @@ const SessionTable = ({
     if (!answer) return initialAnswer;
 
     return answer;
+  };
+
+  const defaultWagerAwardedAmount = (answer: TeamAnswerType) => {
+    console.log("defaults");
+    console.log(answer);
+    if (
+      answer.wagerAwardedAmount === undefined ||
+      answer.wagerAwardedAmount === null
+    )
+      return answer.wagerAmount;
+
+    return answer.wagerAwardedAmount;
   };
 
   return (
@@ -84,19 +187,31 @@ const SessionTable = ({
             const answer = teamAnswer(team);
 
             return (
-              <TableRow key={team.uid}>
+              <TableRow
+                key={`${team.uid}-${answer.questionUid}`}
+                className={classes[answer.status]}
+              >
                 <TableCell>{team.name}</TableCell>
                 <TableCell>{team.pointsTotal}</TableCell>
                 <TableCell align="right">{answer.body}</TableCell>
                 <TableCell align="right">{answer.wagerAmount}</TableCell>
                 <TableCell align="right">
-                  {answer.wagerAwardedAmount || answer.wagerAmount}
+                  <TextField
+                    type={"number"}
+                    disabled={!answer.body}
+                    variant={"outlined"}
+                    onChange={e =>
+                      updateWagerAwardedAmounts(team, parseInt(e.target.value))
+                    }
+                    defaultValue={defaultWagerAwardedAmount(answer)}
+                  />
                 </TableCell>
                 <TableCell align="right">
                   <Button
+                    disabled={!answer.body}
                     variant={"contained"}
-                    size={"small"}
                     color={"primary"}
+                    onClick={() => updateTeamAnswer(team)}
                   >
                     Update
                   </Button>

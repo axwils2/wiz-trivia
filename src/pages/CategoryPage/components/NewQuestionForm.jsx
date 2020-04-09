@@ -40,7 +40,7 @@ const NewQuestionForm = ({
   const categoryUid = match.params.categoryUid;
 
   const createQuestion = () => {
-    const options = optionsRequired ? words(optionsString, /[^, ]+/g) : [];
+    const options = optionsRequired ? optionsString.split(", ") : [];
     firestore
       .questions(triviaSessionUid, categoryUid)
       .add({

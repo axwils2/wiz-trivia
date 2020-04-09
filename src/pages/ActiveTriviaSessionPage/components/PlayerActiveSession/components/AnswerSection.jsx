@@ -57,7 +57,7 @@ const AnswerForm = ({
   questionFormat
 }: AnswerFormProps) => {
   const classes = useStyles();
-
+  console.log();
   if (questionFormat === "multipleChoice") {
     return (
       <RadioGroup
@@ -66,9 +66,9 @@ const AnswerForm = ({
         value={answer.body}
         onChange={e => updateAnswer({ body: e.target.value })}
       >
-        {options.map(option => (
+        {options.map((option, index) => (
           <FormControlLabel
-            key={`radio-body-${option}`}
+            key={`radio-body-${option}-${index}`}
             value={option}
             control={<Radio />}
             label={option}

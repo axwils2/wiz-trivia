@@ -59,7 +59,7 @@ const AdminActiveSession = ({ match }: { match: * }) => {
   }
 
   return (
-    <Box>
+    <Box paddingBottom={"48px"}>
       <SessionHeader triviaSession={triviaSession} />
       <SessionTable
         triviaSession={triviaSession}

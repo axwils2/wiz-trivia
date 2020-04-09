@@ -43,7 +43,8 @@ const defaultAnswer = (categoryUid, questionUid) => {
     categoryUid: categoryUid,
     questionUid: questionUid,
     status: "pending",
-    wagerAmount: null
+    wagerAmount: 0,
+    wagerAwardedAmount: null
   };
 };
 
@@ -56,7 +57,7 @@ const CurrentQuestion = (props: Props) => {
   const [submitted, setSubmitted] = useState(false);
   const invalid =
     answer.body === "" ||
-    (currentCategory.wagerType !== "adminChoice" && !answer.wagerAmount);
+    (currentCategory.wagerType === "oneThroughSix" && answer.wagerAmount === 0);
 
   useEffect(
     () => {
@@ -104,7 +105,7 @@ const CurrentQuestion = (props: Props) => {
         currentCategory={currentCategory}
         previousCategoryWagerAmounts={map(
           filter(team.answers, a => a.categoryUid === currentCategory.uid),
-          a => a.wagerAMount
+          a => a.wagerAmount
         )}
       />
       <Box className={classes.buttonContainer}>

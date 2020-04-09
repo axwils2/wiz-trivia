@@ -77,8 +77,6 @@ const SessionFooter = (props: Props) => {
     [currentQuestion, currentCategory, questions, categories]
   );
 
-  if (!nextQuestion || !nextCategory) return null;
-
   if (sessionComplete) {
     return (
       <Button
@@ -92,6 +90,8 @@ const SessionFooter = (props: Props) => {
       </Button>
     );
   }
+
+  if (!nextQuestion || !nextCategory) return null;
 
   return (
     <Button
