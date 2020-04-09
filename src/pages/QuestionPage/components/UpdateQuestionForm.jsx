@@ -10,7 +10,6 @@ import FormControlLabel from "@material-ui/core/FormControlLabel";
 import FormControl from "@material-ui/core/FormControl";
 import FormLabel from "@material-ui/core/FormLabel";
 import toLower from "lodash/toLower";
-import words from "lodash/words";
 
 import { firestore } from "components/Firebase";
 import type { QuestionType } from "types/QuestionTypes";

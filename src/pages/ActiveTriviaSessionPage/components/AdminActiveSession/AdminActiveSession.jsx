@@ -3,8 +3,6 @@ import React, { useEffect, useState } from "react";
 import { withRouter } from "react-router-dom";
 import Typography from "@material-ui/core/Typography";
 import Box from "@material-ui/core/Box";
-import forEach from "lodash/forEach";
-import flatten from "lodash/flatten";
 
 import { firestore } from "components/Firebase";
 import { docDataWithId, mapQuerySnapshot } from "functions/firestoreHelpers";

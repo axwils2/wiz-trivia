@@ -14,7 +14,6 @@ import TextField from "@material-ui/core/TextField";
 import orderBy from "lodash/orderBy";
 import find from "lodash/find";
 import findIndex from "lodash/findIndex";
-import forEach from "lodash/forEach";
 import flatten from "lodash/flatten";
 
 import { firestore } from "components/Firebase";
@@ -166,7 +165,7 @@ const SessionTable = ({
   };
 
   const updateOrdering = (newOrderBy: string) => {
-    if (newOrderBy == orderedBy) {
+    if (newOrderBy === orderedBy) {
       const newDirection = orderDirection === "asc" ? "desc" : "asc";
       setOrderDirection(newDirection);
     } else {

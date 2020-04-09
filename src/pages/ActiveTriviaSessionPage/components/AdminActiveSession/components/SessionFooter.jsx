@@ -1,6 +1,5 @@
 // @flow
 import React, { useEffect, useState } from "react";
-import Box from "@material-ui/core/Box";
 import Button from "@material-ui/core/Button";
 import find from "lodash/find";
 
