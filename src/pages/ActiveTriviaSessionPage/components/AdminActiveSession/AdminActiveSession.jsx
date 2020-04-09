@@ -52,9 +52,23 @@ const AdminActiveSession = ({ match }: { match: * }) => {
   };
 
   if (!triviaSession) return null;
-  if (triviaSession.status !== "active") {
+  if (triviaSession.status === "disabled") {
     return (
-      <Typography>This trivia session is {triviaSession.status}!</Typography>
+      <Typography>
+        This trivia session is not yet active! Go back to the table view and
+        start the session.
+      </Typography>
+    );
+  }
+
+  if (triviaSession.status === "complete") {
+    return (
+      <Box paddingBottom={"48px"}>
+        <Typography>
+          This trivia session is complete! Here are the results:
+        </Typography>
+        <SessionTable triviaSession={triviaSession} currentQuestion={null} />
+      </Box>
     );
   }
 

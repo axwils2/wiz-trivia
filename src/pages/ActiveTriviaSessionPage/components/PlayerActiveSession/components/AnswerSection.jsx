@@ -1,5 +1,5 @@
 // @flow
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Box from "@material-ui/core/Box";
 import TextField from "@material-ui/core/TextField";
@@ -24,7 +24,7 @@ type AnswerSectionProps = {
 
 type AnswerFormProps = {
   options: Array<string>,
-  answer: TeamAnswerType,
+  answerBody: string,
   updateAnswer: (update: $Shape<TeamAnswerType>) => void,
   questionFormat: QuestionFormatType
 };
@@ -52,18 +52,17 @@ const useStyles = makeStyles(theme => ({
 
 const AnswerForm = ({
   options,
-  answer,
+  answerBody,
   updateAnswer,
   questionFormat
 }: AnswerFormProps) => {
   const classes = useStyles();
-  console.log();
   if (questionFormat === "multipleChoice") {
     return (
       <RadioGroup
         aria-label="body"
         name="body"
-        value={answer.body}
+        value={answerBody}
         onChange={e => updateAnswer({ body: e.target.value })}
       >
         {options.map((option, index) => (
@@ -81,6 +80,9 @@ const AnswerForm = ({
       <Droppable droppableId={"answer"}>
         {provided => (
           <Box ref={provided.innerRef} {...provided.droppableProps}>
+            <Typography variant={"subtitle1"}>
+              Drag and drop the list below:
+            </Typography>
             {options.map((option, index) => (
               <Draggable draggableId={option} index={index} key={option}>
                 {providedDraggable => (
@@ -108,7 +110,6 @@ const AnswerForm = ({
         variant="outlined"
         onChange={e => updateAnswer({ body: e.target.value })}
         margin={"normal"}
-        defaultValue={answer.body}
         fullWidth
       />
     );
@@ -172,6 +173,13 @@ const AnswerSection = (props: AnswerSectionProps) => {
   } = props;
   const [options, setOptions] = useState(currentQuestion.options);
 
+  useEffect(
+    () => {
+      setOptions(currentQuestion.options);
+    },
+    [currentQuestion]
+  );
+
   const onDragEnd = ({ source, destination, draggableId }) => {
     if (!destination) return;
     if (destination.index === source.index) return;
@@ -189,7 +197,7 @@ const AnswerSection = (props: AnswerSectionProps) => {
       <Box marginBottom={"24px"}>
         <DragDropContext onDragEnd={onDragEnd}>
           <AnswerForm
-            answer={answer}
+            answerBody={answer.body || ""}
             updateAnswer={updateAnswer}
             questionFormat={currentQuestion.format}
             options={options}

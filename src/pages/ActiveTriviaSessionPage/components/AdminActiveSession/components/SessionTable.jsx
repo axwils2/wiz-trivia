@@ -4,6 +4,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
+import TableSortLabel from "@material-ui/core/TableSortLabel";
 import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
@@ -53,6 +54,8 @@ const SessionTable = ({
 }) => {
   const [teams, setTeams] = useState([]);
   const [wagerAwardedAmounts, setWagerAwardedAmounts] = useState([]);
+  const [orderedBy, setOrderedBy] = useState("name");
+  const [orderDirection, setOrderDirection] = useState("asc");
   const classes = useStyles();
   const { currentQuestion, currentCategory } = triviaSession;
 
@@ -63,7 +66,6 @@ const SessionTable = ({
         .onSnapshot(querySnapshot => {
           const data = mapQuerySnapshot(querySnapshot);
           setTeams(data);
-          console.log(data);
 
           const amountsArray = flatten(
             data.map(team => {
@@ -76,7 +78,6 @@ const SessionTable = ({
               });
             })
           );
-          console.log(amountsArray);
           setWagerAwardedAmounts(amountsArray);
         });
 
@@ -99,14 +100,11 @@ const SessionTable = ({
     );
     const wagerAwardedAmount = newWagerAwardedAmountObject.amount || 0;
     const pointsTotal = team.pointsTotal + wagerAwardedAmount;
-    console.log(pointsTotal);
     answers[answerIndex] = {
       ...answer,
       wagerAwardedAmount,
       status: newStatus(wagerAwardedAmount)
     };
-
-    console.log(answers);
 
     firestore
       .team(triviaSession.uid, team.uid)
@@ -158,8 +156,6 @@ const SessionTable = ({
   };
 
   const defaultWagerAwardedAmount = (answer: TeamAnswerType) => {
-    console.log("defaults");
-    console.log(answer);
     if (
       answer.wagerAwardedAmount === undefined ||
       answer.wagerAwardedAmount === null
@@ -169,13 +165,39 @@ const SessionTable = ({
     return answer.wagerAwardedAmount;
   };
 
+  const updateOrdering = (newOrderBy: string) => {
+    if (newOrderBy == orderedBy) {
+      const newDirection = orderDirection === "asc" ? "desc" : "asc";
+      setOrderDirection(newDirection);
+    } else {
+      setOrderedBy(newOrderBy);
+      setOrderDirection("asc");
+    }
+  };
+
   return (
     <TableContainer component={Paper} className={classes.table}>
       <Table aria-label="simple table">
         <TableHead>
           <TableRow>
-            <TableCell>Team</TableCell>
-            <TableCell>Total Points</TableCell>
+            <TableCell>
+              <TableSortLabel
+                active={orderedBy === "name"}
+                direction={orderDirection}
+                onClick={() => updateOrdering("name")}
+              >
+                Team Name
+              </TableSortLabel>
+            </TableCell>
+            <TableCell>
+              <TableSortLabel
+                active={orderedBy === "pointsTotal"}
+                direction={orderDirection}
+                onClick={() => updateOrdering("pointsTotal")}
+              >
+                Total Points
+              </TableSortLabel>
+            </TableCell>
             <TableCell align="right">Answer</TableCell>
             <TableCell align="right">Wager Amount</TableCell>
             <TableCell align="right">Wager Amount Awarded</TableCell>
@@ -183,7 +205,7 @@ const SessionTable = ({
           </TableRow>
         </TableHead>
         <TableBody>
-          {orderBy(teams, ["name"], ["asc"]).map(team => {
+          {orderBy(teams, [orderedBy], [orderDirection]).map(team => {
             const answer = teamAnswer(team);
 
             return (
