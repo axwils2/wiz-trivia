@@ -26,7 +26,8 @@ type AnswerFormProps = {
   options: Array<string>,
   answerBody: string,
   updateAnswer: (update: $Shape<TeamAnswerType>) => void,
-  questionFormat: QuestionFormatType
+  questionFormat: QuestionFormatType,
+  questionUid: string
 };
 
 type WagerFormProps = {
@@ -54,9 +55,12 @@ const AnswerForm = ({
   options,
   answerBody,
   updateAnswer,
-  questionFormat
+  questionFormat,
+  questionUid
 }: AnswerFormProps) => {
   const classes = useStyles();
+  console.log(answerBody);
+  console.log(questionUid);
   if (questionFormat === "multipleChoice") {
     return (
       <RadioGroup
@@ -105,10 +109,12 @@ const AnswerForm = ({
   } else {
     return (
       <TextField
-        id={"answer"}
+        id={`answer-for-${questionUid}`}
+        name={`answer-for-${questionUid}`}
         label="Answer"
         variant="outlined"
         onChange={e => updateAnswer({ body: e.target.value })}
+        value={answerBody}
         margin={"normal"}
         fullWidth
       />
@@ -201,6 +207,7 @@ const AnswerSection = (props: AnswerSectionProps) => {
             updateAnswer={updateAnswer}
             questionFormat={currentQuestion.format}
             options={options}
+            questionUid={currentQuestion.uid}
           />
         </DragDropContext>
       </Box>
