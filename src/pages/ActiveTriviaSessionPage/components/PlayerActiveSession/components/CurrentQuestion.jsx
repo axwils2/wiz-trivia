@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Box from "@material-ui/core/Box";
+import Container from "@material-ui/core/Container";
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
 import Divider from "@material-ui/core/Divider";
@@ -30,7 +31,8 @@ const useStyles = makeStyles({
     bottom: 0,
     left: 0,
     padding: "0 16px 16px",
-    width: "100%"
+    width: "100%",
+    textAlign: "center"
   },
   divider: {
     margin: "16px 0"
@@ -111,11 +113,12 @@ const CurrentQuestion = (props: Props) => {
       <Box className={classes.buttonContainer}>
         <Button
           disabled={submitted || invalid}
-          fullWidth
           variant={"contained"}
+          fullWidth
           color={"primary"}
           size={"large"}
           onClick={onSubmit}
+          style={{ maxWidth: "480px" }}
         >
           Submit
         </Button>
