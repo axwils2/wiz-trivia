@@ -26,7 +26,7 @@ const NewTriviaSessionForm = ({ history }: { history: * }) => {
         name,
         nameInsensitive: toLower(name),
         status: "disabled",
-        userId: authUser.uid,
+        userUid: authUser.uid,
         createdAt: firestore.timestamp()
       })
       .then(docRef => {

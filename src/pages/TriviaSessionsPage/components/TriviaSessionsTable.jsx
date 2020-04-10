@@ -33,7 +33,7 @@ const TriviaSessionsTable = ({ history }: { history: * }) => {
     () => {
       firestore
         .triviaSessions()
-        .where("userId", "==", authUser.uid)
+        .where("userUid", "==", authUser.uid)
         .orderBy("createdAt", "desc")
         .limit(10)
         .get()
