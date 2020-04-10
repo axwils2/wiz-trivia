@@ -44,7 +44,7 @@ const defaultAnswer = (categoryUid, questionUid) => {
     body: "",
     categoryUid: categoryUid,
     questionUid: questionUid,
-    status: "pending",
+    status: "draft",
     wagerAmount: 0,
     wagerAwardedAmount: null
   };
@@ -83,7 +83,7 @@ const CurrentQuestion = (props: Props) => {
     setSubmitted(true);
 
     const answers = team.answers;
-    answers.push(answer);
+    answers.push({ ...answer, status: "pending" });
 
     firestore.team(triviaSessionUid, team.uid).update({ answers });
   };

@@ -14,10 +14,16 @@ import TextField from "@material-ui/core/TextField";
 import Tooltip from "@material-ui/core/Tooltip";
 import IconButton from "@material-ui/core/IconButton";
 import DeleteIcon from "@material-ui/icons/Delete";
+import AddIcon from "@material-ui/icons/Add";
+import SaveIcon from "@material-ui/icons/Save";
+import RadioButtonUncheckedIcon from "@material-ui/icons/RadioButtonUnchecked";
+import RefreshIcon from "@material-ui/icons/Refresh";
+import RemoveIcon from "@material-ui/icons/Remove";
 import orderBy from "lodash/orderBy";
 import find from "lodash/find";
 import findIndex from "lodash/findIndex";
 import flatten from "lodash/flatten";
+import sumBy from "lodash/sumBy";
 
 import { firestore } from "components/Firebase";
 import { mapQuerySnapshot } from "functions/firestoreHelpers";
@@ -36,6 +42,9 @@ const initialAnswer = {
 const useStyles = makeStyles({
   table: {
     marginBottom: "24px"
+  },
+  editAmount: {
+    width: "64px"
   },
   draft: {},
   pending: {
@@ -101,16 +110,18 @@ const SessionTable = ({
         amountObject.questionUid === currentQuestion.uid
     );
     const wagerAwardedAmount = newWagerAwardedAmountObject.amount || 0;
-    const pointsTotal = team.pointsTotal + wagerAwardedAmount;
     answers[answerIndex] = {
       ...answer,
       wagerAwardedAmount,
       status: newStatus(wagerAwardedAmount)
     };
-
+    const pointsTotal = sumBy(
+      answers,
+      answer => answer.wagerAwardedAmount || 0
+    );
     firestore
       .team(triviaSession.uid, team.uid)
-      .update({ answers, pointsTotal });
+      .update({ answers, wagerAwardedAmount, pointsTotal });
   };
 
   const newStatus = (wagerAwardedAmount: ?number) => {
@@ -127,20 +138,60 @@ const SessionTable = ({
     if (!currentQuestion) return null;
 
     const safeWagerAwardedAmounts = Array.from(wagerAwardedAmounts);
-    const wagerAwardedAmountObjectIndex = findIndex(
+    const index = wagerAwardedAmountObjectIndex(team);
+    if (index === null) return null;
+
+    const wagerAwardedAmountObject = wagerAwardedAmounts[index];
+
+    wagerAwardedAmountObject["amount"] = wagerAwardedAmount;
+    safeWagerAwardedAmounts[index] = wagerAwardedAmountObject;
+    setWagerAwardedAmounts(safeWagerAwardedAmounts);
+  };
+
+  const quickUpdateWagerAwardedAmounts = (team: TeamType, action: string) => {
+    const index = wagerAwardedAmountObjectIndex(team);
+    if (index === null) return null;
+
+    const wagerAwardedAmountObject = wagerAwardedAmounts[index];
+    let amount = wagerAwardedAmountObject.amount;
+    if (amount === null || amount === undefined) return null;
+
+    if (
+      (action === "negative" && amount > 0) ||
+      (action === "positive" && amount < 0)
+    ) {
+      amount = amount * -1;
+    } else if (action === "zero") {
+      amount = 0;
+    }
+
+    updateWagerAwardedAmounts(team, amount);
+  };
+
+  const wagerAwardedAmount = (team: TeamType) => {
+    const index = wagerAwardedAmountObjectIndex(team);
+    const answer = teamAnswer(team);
+    const defaultAmount = defaultWagerAwardedAmount(answer);
+    if (index === null) return defaultAmount;
+
+    const wagerAwardedAmountObject = wagerAwardedAmounts[index];
+    if (!wagerAwardedAmountObject) return defaultAmount;
+
+    const amount = wagerAwardedAmountObject.amount;
+    if (amount === null || amount === undefined) return defaultAmount;
+
+    return amount;
+  };
+
+  const wagerAwardedAmountObjectIndex = (team: TeamType) => {
+    if (!currentQuestion) return null;
+
+    return findIndex(
       wagerAwardedAmounts,
       amountObject =>
         amountObject.teamUid === team.uid &&
         amountObject.questionUid === currentQuestion.uid
     );
-    const wagerAwardedAmountObject =
-      wagerAwardedAmounts[wagerAwardedAmountObjectIndex];
-
-    wagerAwardedAmountObject["amount"] = wagerAwardedAmount;
-    safeWagerAwardedAmounts[
-      wagerAwardedAmountObjectIndex
-    ] = wagerAwardedAmountObject;
-    setWagerAwardedAmounts(safeWagerAwardedAmounts);
   };
 
   const teamAnswer = (team: TeamType) => {
@@ -162,7 +213,7 @@ const SessionTable = ({
       answer.wagerAwardedAmount === undefined ||
       answer.wagerAwardedAmount === null
     )
-      return answer.wagerAmount;
+      return answer.wagerAmount || undefined;
 
     return answer.wagerAwardedAmount;
   };
@@ -206,7 +257,7 @@ const SessionTable = ({
             </TableCell>
             <TableCell align="right">Answer</TableCell>
             <TableCell align="right">Wager Amount</TableCell>
-            <TableCell align="right">Awarded</TableCell>
+            <TableCell align="right">Edit Points</TableCell>
             <TableCell align="right">Actions</TableCell>
             <TableCell align="right" />
           </TableRow>
@@ -227,23 +278,72 @@ const SessionTable = ({
                 <TableCell align="right">
                   <TextField
                     type={"number"}
+                    name={`wagerAwardedAmount-${team.uid}-${
+                      answer.questionUid
+                    }`}
                     disabled={!answer.body}
                     variant={"outlined"}
+                    className={classes.editAmount}
                     onChange={e =>
                       updateWagerAwardedAmounts(team, parseInt(e.target.value))
                     }
-                    defaultValue={defaultWagerAwardedAmount(answer)}
+                    value={wagerAwardedAmount(team)}
                   />
                 </TableCell>
                 <TableCell align="right">
-                  <Button
-                    disabled={!answer.body}
-                    variant={"contained"}
-                    color={"primary"}
-                    onClick={() => updateTeamAnswer(team)}
+                  <Tooltip title="Make Edit Points Positive" placement={"top"}>
+                    <IconButton
+                      edge={"start"}
+                      color={"inherit"}
+                      aria-label={"delete"}
+                      size={"small"}
+                      onClick={() =>
+                        quickUpdateWagerAwardedAmounts(team, "positive")
+                      }
+                    >
+                      <AddIcon fontSize={"small"} />
+                    </IconButton>
+                  </Tooltip>
+                  <Tooltip title="Make Edit Points 0" placement={"top"}>
+                    <IconButton
+                      edge={"start"}
+                      color={"inherit"}
+                      aria-label={"delete"}
+                      size={"small"}
+                      onClick={() =>
+                        quickUpdateWagerAwardedAmounts(team, "zero")
+                      }
+                    >
+                      <RadioButtonUncheckedIcon fontSize={"small"} />
+                    </IconButton>
+                  </Tooltip>
+                  <Tooltip title="Make Edit Points Negative" placement={"top"}>
+                    <IconButton
+                      edge={"start"}
+                      color={"inherit"}
+                      aria-label={"delete"}
+                      size={"small"}
+                      onClick={() =>
+                        quickUpdateWagerAwardedAmounts(team, "negative")
+                      }
+                    >
+                      <RemoveIcon fontSize={"small"} />
+                    </IconButton>
+                  </Tooltip>
+                  <Tooltip
+                    title="Save And Update Total Points"
+                    placement={"top"}
                   >
-                    Update
-                  </Button>
+                    <IconButton
+                      edge={"start"}
+                      color={"inherit"}
+                      aria-label={"delete"}
+                      size={"small"}
+                      onClick={() => updateTeamAnswer(team)}
+                    >
+                      <SaveIcon fontSize={"small"} />
+                    </IconButton>
+                  </Tooltip>
                 </TableCell>
                 <TableCell align="right">
                   <Tooltip title="Delete Team" placement={"top"}>
