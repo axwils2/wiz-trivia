@@ -43,8 +43,15 @@ const useStyles = makeStyles({
   table: {
     marginBottom: "24px"
   },
+  teamName: {
+    display: "inline-block",
+    marginRight: "4px"
+  },
   editAmount: {
     width: "64px"
+  },
+  quickActions: {
+    width: "108px"
   },
   draft: {},
   pending: {
@@ -259,19 +266,34 @@ const SessionTable = ({
             <TableCell align="right">Wager Amount</TableCell>
             <TableCell align="right">Edit Points</TableCell>
             <TableCell align="right">Actions</TableCell>
-            <TableCell align="right" />
           </TableRow>
         </TableHead>
         <TableBody>
           {orderBy(teams, [orderedBy], [orderDirection]).map(team => {
             const answer = teamAnswer(team);
+            const editAmount = wagerAwardedAmount(team);
+            const quickActionsDisabled =
+              editAmount === null || editAmount == undefined;
 
             return (
               <TableRow
                 key={`${team.uid}-${answer.questionUid}`}
                 className={classes[answer.status]}
               >
-                <TableCell>{team.name}</TableCell>
+                <TableCell>
+                  <div className={classes.teamName}>{team.name}</div>
+                  <Tooltip title="Delete Team" placement={"top"}>
+                    <IconButton
+                      edge={"start"}
+                      color={"inherit"}
+                      aria-label={"delete"}
+                      size={"small"}
+                      onClick={() => deleteTeam(team)}
+                    >
+                      <DeleteIcon fontSize={"small"} />
+                    </IconButton>
+                  </Tooltip>
+                </TableCell>
                 <TableCell>{team.pointsTotal}</TableCell>
                 <TableCell align="right">{answer.body}</TableCell>
                 <TableCell align="right">{answer.wagerAmount}</TableCell>
@@ -287,12 +309,13 @@ const SessionTable = ({
                     onChange={e =>
                       updateWagerAwardedAmounts(team, parseInt(e.target.value))
                     }
-                    value={wagerAwardedAmount(team)}
+                    value={editAmount}
                   />
                 </TableCell>
-                <TableCell align="right">
+                <TableCell align="right" className={classes.quickActions}>
                   <Tooltip title="Make Edit Points Positive" placement={"top"}>
                     <IconButton
+                      disabled={quickActionsDisabled}
                       edge={"start"}
                       color={"inherit"}
                       aria-label={"delete"}
@@ -306,6 +329,7 @@ const SessionTable = ({
                   </Tooltip>
                   <Tooltip title="Make Edit Points 0" placement={"top"}>
                     <IconButton
+                      disabled={quickActionsDisabled}
                       edge={"start"}
                       color={"inherit"}
                       aria-label={"delete"}
@@ -319,6 +343,7 @@ const SessionTable = ({
                   </Tooltip>
                   <Tooltip title="Make Edit Points Negative" placement={"top"}>
                     <IconButton
+                      disabled={quickActionsDisabled}
                       edge={"start"}
                       color={"inherit"}
                       aria-label={"delete"}
@@ -335,6 +360,7 @@ const SessionTable = ({
                     placement={"top"}
                   >
                     <IconButton
+                      disabled={quickActionsDisabled}
                       edge={"start"}
                       color={"inherit"}
                       aria-label={"delete"}
@@ -342,19 +368,6 @@ const SessionTable = ({
                       onClick={() => updateTeamAnswer(team)}
                     >
                       <SaveIcon fontSize={"small"} />
-                    </IconButton>
-                  </Tooltip>
-                </TableCell>
-                <TableCell align="right">
-                  <Tooltip title="Delete Team" placement={"top"}>
-                    <IconButton
-                      edge={"start"}
-                      color={"inherit"}
-                      aria-label={"delete"}
-                      size={"small"}
-                      onClick={() => deleteTeam(team)}
-                    >
-                      <DeleteIcon fontSize={"small"} />
                     </IconButton>
                   </Tooltip>
                 </TableCell>
