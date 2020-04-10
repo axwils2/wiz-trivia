@@ -91,6 +91,9 @@ const CurrentQuestion = (props: Props) => {
   return (
     <Box className={classes.pageContainer}>
       <Typography variant={"caption"} display={"block"}>
+        Team: {team.name}
+      </Typography>
+      <Typography variant={"caption"} display={"block"}>
         Category: {currentCategory.name}
       </Typography>
       <Typography variant={"overline"} display={"block"}>

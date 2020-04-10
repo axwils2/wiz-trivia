@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import { withRouter } from "react-router-dom";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
+import Typography from "@material-ui/core/Typography";
 import Container from "@material-ui/core/Container";
 import toUpper from "lodash/toUpper";
 import Cookies from "universal-cookie";
@@ -16,6 +17,7 @@ const cookies = new Cookies();
 const LandingPage = ({ history }: { history: * }) => {
   const [accessCode, setAccessCode] = useState("");
   const [teamName, setTeamName] = useState("");
+  const [error, setError] = useState(null);
   const invalid = accessCode === "" || teamName === "";
 
   useEffect(
@@ -42,30 +44,47 @@ const LandingPage = ({ history }: { history: * }) => {
 
         firestore
           .teams(session.uid)
-          .add({
-            name: teamName,
-            pointsTotal: 0,
-            answers: []
-          })
-          .then(docRef => {
-            let dt = new Date();
-            dt.setHours(dt.getHours() + 4);
+          .where("name", "==", teamName)
+          .limit(1)
+          .get()
+          .then(querySnapshot => {
+            const teamWithName = mapQuerySnapshot(querySnapshot)[0];
 
-            cookies.set(
-              process.env.REACT_APP_ACTIVE_SESSION_COOKIE_NAME,
-              JSON.stringify({
-                teamUid: docRef.id,
-                triviaSessionUid: session.uid
-              }),
-              {
-                path: "/",
-                expires: dt,
-                secure: process.env.REACT_APP_SECURE_COOKIES === "true",
-                sameSite: "strict"
-              }
-            );
+            if (teamWithName) {
+              setError(
+                "This team name has already been taken. Please choose another."
+              );
+            } else {
+              firestore
+                .teams(session.uid)
+                .add({
+                  name: teamName,
+                  pointsTotal: 0,
+                  answers: []
+                })
+                .then(docRef => {
+                  let dt = new Date();
+                  dt.setHours(dt.getHours() + 4);
 
-            history.push(ROUTES.ACTIVE_TRIVIA_SESSION.linkPath(session.uid));
+                  cookies.set(
+                    process.env.REACT_APP_ACTIVE_SESSION_COOKIE_NAME,
+                    JSON.stringify({
+                      teamUid: docRef.id,
+                      triviaSessionUid: session.uid
+                    }),
+                    {
+                      path: "/",
+                      expires: dt,
+                      secure: process.env.REACT_APP_SECURE_COOKIES === "true",
+                      sameSite: "strict"
+                    }
+                  );
+
+                  history.push(
+                    ROUTES.ACTIVE_TRIVIA_SESSION.linkPath(session.uid)
+                  );
+                });
+            }
           });
       });
   };
@@ -90,6 +109,9 @@ const LandingPage = ({ history }: { history: * }) => {
         value={teamName}
         fullWidth
       />
+      <Typography color={"error"} gutterBottom>
+        {error}
+      </Typography>
       <Button
         disabled={invalid}
         variant={"contained"}

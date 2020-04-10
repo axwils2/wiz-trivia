@@ -11,6 +11,9 @@ import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
+import Tooltip from "@material-ui/core/Tooltip";
+import IconButton from "@material-ui/core/IconButton";
+import DeleteIcon from "@material-ui/icons/Delete";
 import orderBy from "lodash/orderBy";
 import find from "lodash/find";
 import findIndex from "lodash/findIndex";
@@ -174,6 +177,10 @@ const SessionTable = ({
     }
   };
 
+  const deleteTeam = (team: TeamType) => {
+    firestore.team(triviaSession.uid, team.uid).delete();
+  };
+
   return (
     <TableContainer component={Paper} className={classes.table}>
       <Table aria-label="simple table">
@@ -199,7 +206,8 @@ const SessionTable = ({
             </TableCell>
             <TableCell align="right">Answer</TableCell>
             <TableCell align="right">Wager Amount</TableCell>
-            <TableCell align="right">Wager Amount Awarded</TableCell>
+            <TableCell align="right">Awarded</TableCell>
+            <TableCell align="right">Actions</TableCell>
             <TableCell align="right" />
           </TableRow>
         </TableHead>
@@ -236,6 +244,19 @@ const SessionTable = ({
                   >
                     Update
                   </Button>
+                </TableCell>
+                <TableCell align="right">
+                  <Tooltip title="Delete Team" placement={"top"}>
+                    <IconButton
+                      edge={"start"}
+                      color={"inherit"}
+                      aria-label={"delete"}
+                      size={"small"}
+                      onClick={() => deleteTeam(team)}
+                    >
+                      <DeleteIcon fontSize={"small"} />
+                    </IconButton>
+                  </Tooltip>
                 </TableCell>
               </TableRow>
             );
