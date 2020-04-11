@@ -59,7 +59,7 @@ const AppBar = () => {
               align={authUser ? "left" : "center"}
             >
               <Link to={ROUTES.LANDING} className={classes.link}>
-                Wiz Trivia
+                Trivia Wiz
               </Link>
             </Typography>
             {authUser && (
