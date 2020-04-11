@@ -43,7 +43,6 @@ const SessionFooter = (props: Props) => {
             question.categoryUid === currentCategory.uid &&
             question.order === currentQuestion.order + 1
         );
-
         if (!newNextQuestion) {
           // There are no more questions in this category. Move to the next one
           newNextCategory = find(
@@ -64,9 +63,11 @@ const SessionFooter = (props: Props) => {
                 question.categoryUid === newNextCategory.uid &&
                 question.order === 1
             );
+            setSessionComplete(false);
           }
         } else {
           newNextCategory = currentCategory;
+          setSessionComplete(false);
         }
       }
 

@@ -1,6 +1,8 @@
 // @flow
 import React, { useState } from "react";
 import { withRouter } from "react-router-dom";
+import { makeStyles } from "@material-ui/core/styles";
+import Box from "@material-ui/core/Box";
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
 import TextField from "@material-ui/core/TextField";
@@ -16,6 +18,12 @@ import { firestore } from "components/Firebase";
 import { docDataWithId } from "functions/firestoreHelpers";
 import type { QuestionType } from "types/QuestionTypes";
 
+const useStyles = makeStyles({
+  formatRadioSection: {
+    marginRight: "40px"
+  }
+});
+
 const NewQuestionForm = ({
   match,
   newOrderValue,
@@ -25,15 +33,18 @@ const NewQuestionForm = ({
   newOrderValue: number,
   afterCreate: (question: QuestionType) => void
 }) => {
+  const classes = useStyles();
   const [body, setBody] = useState("");
   const [answer, setAnswer] = useState("");
   const [format, setFormat] = useState(null);
+  const [incorrectAnswerPenalty, setIncorrectAnswerPenalty] = useState(null);
   const [optionsString, setOptionsString] = useState("");
   const optionsRequired = ["multipleChoice", "placeInOrder"].includes(format);
   const invalid =
     body === "" ||
     answer === "" ||
     !format ||
+    !incorrectAnswerPenalty ||
     (optionsRequired && optionsString === "");
   const triviaSessionUid = match.params.triviaSessionUid;
   const categoryUid = match.params.categoryUid;
@@ -49,6 +60,7 @@ const NewQuestionForm = ({
         order: newOrderValue || 0,
         answer,
         format,
+        incorrectAnswerPenalty,
         options,
         categoryUid,
         triviaSessionUid
@@ -85,7 +97,7 @@ const NewQuestionForm = ({
         value={answer}
         fullWidth
       />
-      <FormControl component="fieldset">
+      <FormControl component="fieldset" className={classes.formatRadioSection}>
         <FormLabel component="legend">Format</FormLabel>
         <RadioGroup
           aria-label="format"
@@ -107,6 +119,26 @@ const NewQuestionForm = ({
             value="placeInOrder"
             control={<Radio />}
             label="Place In Order"
+          />
+        </RadioGroup>
+      </FormControl>
+      <FormControl component="fieldset">
+        <FormLabel component="legend">Incorrect Answer Penalty</FormLabel>
+        <RadioGroup
+          aria-label="incorrectAnswerPenalty"
+          name="incorrectAnswerPenalty"
+          value={incorrectAnswerPenalty}
+          onChange={e => setIncorrectAnswerPenalty(e.target.value)}
+        >
+          <FormControlLabel
+            value="zeroPoints"
+            control={<Radio />}
+            label="No Change To Total Points"
+          />
+          <FormControlLabel
+            value="negativePoints"
+            control={<Radio />}
+            label="Reduce Total Points By Wager Amount"
           />
         </RadioGroup>
       </FormControl>

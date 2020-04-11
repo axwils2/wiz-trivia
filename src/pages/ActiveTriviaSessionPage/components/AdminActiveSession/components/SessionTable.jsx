@@ -15,9 +15,12 @@ import IconButton from "@material-ui/core/IconButton";
 import DeleteIcon from "@material-ui/icons/Delete";
 import AddIcon from "@material-ui/icons/Add";
 import SaveIcon from "@material-ui/icons/Save";
+import CheckIcon from "@material-ui/icons/Check";
+import CloseIcon from "@material-ui/icons/Close";
 import RadioButtonUncheckedIcon from "@material-ui/icons/RadioButtonUnchecked";
 import RefreshIcon from "@material-ui/icons/Refresh";
 import RemoveIcon from "@material-ui/icons/Remove";
+import BlockIcon from "@material-ui/icons/Block";
 import orderBy from "lodash/orderBy";
 import find from "lodash/find";
 import findIndex from "lodash/findIndex";
@@ -27,7 +30,11 @@ import sumBy from "lodash/sumBy";
 import { firestore } from "components/Firebase";
 import { mapQuerySnapshot } from "functions/firestoreHelpers";
 import type { TriviaSessionType } from "types/TriviaSessionTypes";
-import type { TeamType, TeamAnswerType } from "types/TeamTypes";
+import type {
+  TeamType,
+  TeamAnswerType,
+  TeamAnswerStatusType
+} from "types/TeamTypes";
 
 const initialAnswer = {
   body: null,
@@ -62,6 +69,12 @@ const useStyles = makeStyles({
   },
   incorrect: {
     backgroundColor: "#fa9797"
+  },
+  correctIcon: {
+    color: "#038303"
+  },
+  incorrectIcon: {
+    color: "#d62323"
   }
 });
 
@@ -104,38 +117,65 @@ const SessionTable = ({
     [triviaSession.uid]
   );
 
-  const updateTeamAnswer = (team: TeamType) => {
+  const updateTeamAnswer = (
+    team: TeamType,
+    newStatus: TeamAnswerStatusType
+  ) => {
     if (!currentQuestion) return null;
 
     const answers = team.answers;
     const answer = teamAnswer(team);
     const answerIndex = findIndex(answers, oldAnswer => oldAnswer === answer);
-    const newWagerAwardedAmountObject = find(
-      wagerAwardedAmounts,
-      amountObject =>
-        amountObject.teamUid === team.uid &&
-        amountObject.questionUid === currentQuestion.uid
-    );
-    const wagerAwardedAmount = newWagerAwardedAmountObject.amount || 0;
-    answers[answerIndex] = {
-      ...answer,
-      wagerAwardedAmount,
-      status: newStatus(wagerAwardedAmount)
-    };
-    const pointsTotal = sumBy(
-      answers,
-      answer => answer.wagerAwardedAmount || 0
-    );
+    const penaltyType = currentQuestion.incorrectAnswerPenalty;
+    let editAmount = wagerAwardedAmount(team) || 0;
+    const answerUpdates = { status: newStatus, wagerAwardedAmount: editAmount };
+    let pointsTotal = team.pointsTotal;
+
+    if (newStatus === "refreshed") {
+      answers[answerIndex] = { ...answer, ...answerUpdates };
+    } else {
+      if (newStatus === "incorrect") {
+        if (editAmount === null || editAmount === undefined) {
+          editAmount = 0;
+        } else if (editAmount > 0 && penaltyType === "zeroPoints") {
+          editAmount = 0;
+        } else if (editAmount === 0 && penaltyType === "zeroPoints") {
+          editAmount = 0;
+        } else if (editAmount < 0 && penaltyType === "zeroPoints") {
+          editAmount = 0;
+        } else if (editAmount > 0 && penaltyType === "negativePoints") {
+          editAmount = editAmount * -1;
+        } else if (editAmount === 0 && penaltyType === "negativePoints") {
+          editAmount = editAmount * -1;
+        } else if (editAmount < 0 && penaltyType === "negativePoints") {
+          editAmount = editAmount;
+        }
+      } else if (newStatus === "correct") {
+        if (editAmount === null || editAmount === undefined) {
+          editAmount = 0;
+        } else if (editAmount < 0) {
+          editAmount = editAmount * -1;
+        }
+      }
+
+      const newWagerAwardedAmountObject = updateWagerAwardedAmounts(
+        team,
+        editAmount
+      );
+      let newAmount = 0;
+
+      if (newWagerAwardedAmountObject) {
+        newAmount = newWagerAwardedAmountObject.amount;
+      }
+      answerUpdates["wagerAwardedAmount"] = newAmount;
+
+      answers[answerIndex] = { ...answer, ...answerUpdates };
+      pointsTotal = sumBy(answers, answer => answer.wagerAwardedAmount || 0);
+    }
+
     firestore
       .team(triviaSession.uid, team.uid)
-      .update({ answers, wagerAwardedAmount, pointsTotal });
-  };
-
-  const newStatus = (wagerAwardedAmount: ?number) => {
-    if (wagerAwardedAmount === 0) return "incorrect";
-    if (wagerAwardedAmount === null || wagerAwardedAmount === undefined)
-      return "pending";
-    return "correct";
+      .update({ answers, pointsTotal });
   };
 
   const updateWagerAwardedAmounts = (
@@ -153,26 +193,7 @@ const SessionTable = ({
     wagerAwardedAmountObject["amount"] = wagerAwardedAmount;
     safeWagerAwardedAmounts[index] = wagerAwardedAmountObject;
     setWagerAwardedAmounts(safeWagerAwardedAmounts);
-  };
-
-  const quickUpdateWagerAwardedAmounts = (team: TeamType, action: string) => {
-    const index = wagerAwardedAmountObjectIndex(team);
-    if (index === null) return null;
-
-    const wagerAwardedAmountObject = wagerAwardedAmounts[index];
-    let amount = wagerAwardedAmountObject.amount;
-    if (amount === null || amount === undefined) return null;
-
-    if (
-      (action === "negative" && amount > 0) ||
-      (action === "positive" && amount < 0)
-    ) {
-      amount = amount * -1;
-    } else if (action === "zero") {
-      amount = 0;
-    }
-
-    updateWagerAwardedAmounts(team, amount);
+    return wagerAwardedAmountObject;
   };
 
   const wagerAwardedAmount = (team: TeamType) => {
@@ -250,6 +271,17 @@ const SessionTable = ({
     firestore.team(triviaSession.uid, team.uid).update({ answers });
   };
 
+  const incorrectButtonToolTipMessage = () => {
+    if (
+      !currentQuestion ||
+      currentQuestion.incorrectAnswerPenalty === "zeroPoints"
+    ) {
+      return "Mark as incorrect and add 0 points to team score";
+    }
+
+    return "Mark as incorrect and subtract points from team score";
+  };
+
   return (
     <TableContainer component={Paper} className={classes.table}>
       <Table aria-label="simple table">
@@ -323,51 +355,20 @@ const SessionTable = ({
                   />
                 </TableCell>
                 <TableCell align="right" className={classes.quickActions}>
-                  <Tooltip title="Make Edit Points Positive" placement={"top"}>
+                  <Tooltip
+                    title={incorrectButtonToolTipMessage()}
+                    placement={"top"}
+                  >
                     <span>
                       <IconButton
                         disabled={disabled}
                         edge={"start"}
-                        color={"inherit"}
-                        aria-label={"delete"}
+                        aria-label={"incorrect"}
                         size={"small"}
-                        onClick={() =>
-                          quickUpdateWagerAwardedAmounts(team, "positive")
-                        }
+                        className={classes.incorrectIcon}
+                        onClick={() => updateTeamAnswer(team, "incorrect")}
                       >
-                        <AddIcon fontSize={"small"} />
-                      </IconButton>
-                    </span>
-                  </Tooltip>
-                  <Tooltip title="Make Edit Points 0" placement={"top"}>
-                    <span>
-                      <IconButton
-                        disabled={disabled}
-                        edge={"start"}
-                        color={"inherit"}
-                        aria-label={"delete"}
-                        size={"small"}
-                        onClick={() =>
-                          quickUpdateWagerAwardedAmounts(team, "zero")
-                        }
-                      >
-                        <RadioButtonUncheckedIcon fontSize={"small"} />
-                      </IconButton>
-                    </span>
-                  </Tooltip>
-                  <Tooltip title="Make Edit Points Negative" placement={"top"}>
-                    <span>
-                      <IconButton
-                        disabled={disabled}
-                        edge={"start"}
-                        color={"inherit"}
-                        aria-label={"delete"}
-                        size={"small"}
-                        onClick={() =>
-                          quickUpdateWagerAwardedAmounts(team, "negative")
-                        }
-                      >
-                        <RemoveIcon fontSize={"small"} />
+                        <CloseIcon fontSize={"small"} />
                       </IconButton>
                     </span>
                   </Tooltip>
@@ -377,28 +378,28 @@ const SessionTable = ({
                         disabled={disabled}
                         edge={"start"}
                         color={"inherit"}
-                        aria-label={"delete"}
+                        aria-label={"refresh"}
                         size={"small"}
-                        onClick={() => refreshTeamAnswer(team)}
+                        onClick={() => updateTeamAnswer(team, "refreshed")}
                       >
                         <RefreshIcon fontSize={"small"} />
                       </IconButton>
                     </span>
                   </Tooltip>
                   <Tooltip
-                    title="Save And Update Total Points"
+                    title="Mark as correct and add points to team score"
                     placement={"top"}
                   >
                     <span>
                       <IconButton
                         disabled={disabled}
                         edge={"start"}
-                        color={"inherit"}
-                        aria-label={"delete"}
+                        aria-label={"correct"}
                         size={"small"}
-                        onClick={() => updateTeamAnswer(team)}
+                        className={classes.correctIcon}
+                        onClick={() => updateTeamAnswer(team, "correct")}
                       >
-                        <SaveIcon fontSize={"small"} />
+                        <CheckIcon fontSize={"small"} />
                       </IconButton>
                     </span>
                   </Tooltip>

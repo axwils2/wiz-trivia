@@ -131,6 +131,7 @@ const QuestionsTable = ({
               <TableCell>Body</TableCell>
               <TableCell align="right">Answer</TableCell>
               <TableCell align="right">Format</TableCell>
+              <TableCell align="right">Incorrect Answer Penalty</TableCell>
               <TableCell align="right">Options</TableCell>
               <TableCell />
             </TableRow>
@@ -170,6 +171,9 @@ const QuestionsTable = ({
                 </TableCell>
                 <TableCell align="right">{question.answer}</TableCell>
                 <TableCell align="right">{question.format}</TableCell>
+                <TableCell align="right">
+                  {question.incorrectAnswerPenalty}
+                </TableCell>
                 <TableCell align="right">
                   {question.options.join(", ")}
                 </TableCell>

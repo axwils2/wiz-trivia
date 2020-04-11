@@ -1,5 +1,6 @@
 // @flow
 import React, { useState } from "react";
+import { makeStyles } from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
 import Box from "@material-ui/core/Box";
 import Typography from "@material-ui/core/Typography";
@@ -14,6 +15,12 @@ import toLower from "lodash/toLower";
 import { firestore } from "components/Firebase";
 import type { QuestionType } from "types/QuestionTypes";
 
+const useStyles = makeStyles({
+  formatRadioSection: {
+    marginRight: "40px"
+  }
+});
+
 const UpdateQuestionForm = ({
   question,
   triviaSessionUid,
@@ -23,9 +30,13 @@ const UpdateQuestionForm = ({
   triviaSessionUid: string,
   categoryUid: string
 }) => {
+  const classes = useStyles();
   const [body, setBody] = useState(question.body);
   const [answer, setAnswer] = useState(question.answer);
   const [format, setFormat] = useState(question.format);
+  const [incorrectAnswerPenalty, setIncorrectAnswerPenalty] = useState(
+    question.incorrectAnswerPenalty
+  );
   const [optionsString, setOptionsString] = useState(
     question.options.join(", ")
   );
@@ -34,6 +45,7 @@ const UpdateQuestionForm = ({
     body === "" ||
     answer === "" ||
     !format ||
+    !incorrectAnswerPenalty ||
     (optionsRequired && optionsString === "");
 
   const updateQuestion = () => {
@@ -44,6 +56,7 @@ const UpdateQuestionForm = ({
       bodyInsensitive: toLower(body),
       answer,
       format,
+      incorrectAnswerPenalty,
       options
     });
   };
@@ -72,7 +85,10 @@ const UpdateQuestionForm = ({
         fullWidth
       />
       <Box>
-        <FormControl component="fieldset">
+        <FormControl
+          component="fieldset"
+          className={classes.formatRadioSection}
+        >
           <FormLabel component="legend">Format</FormLabel>
           <RadioGroup
             aria-label="format"
@@ -94,6 +110,26 @@ const UpdateQuestionForm = ({
               value="placeInOrder"
               control={<Radio />}
               label="Place In Order"
+            />
+          </RadioGroup>
+        </FormControl>
+        <FormControl component="fieldset">
+          <FormLabel component="legend">Incorrect Answer Penalty</FormLabel>
+          <RadioGroup
+            aria-label="incorrectAnswerPenalty"
+            name="incorrectAnswerPenalty"
+            value={incorrectAnswerPenalty}
+            onChange={e => setIncorrectAnswerPenalty(e.target.value)}
+          >
+            <FormControlLabel
+              value="zeroPoints"
+              control={<Radio />}
+              label="No Change To Total Points"
+            />
+            <FormControlLabel
+              value="negativePoints"
+              control={<Radio />}
+              label="Reduce Total Points By Wager Amount"
             />
           </RadioGroup>
         </FormControl>

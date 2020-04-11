@@ -23,7 +23,7 @@ const SessionHeader = ({
 
   if (!currentQuestion || !currentCategory) {
     return (
-      <Typography variant={"h6"}>
+      <Typography variant={"h6"} gutterBottom>
         Your session is now live. Currently waiting on players to join the
         session. To begin the session and display questions to your teams, start
         the session.
@@ -35,6 +35,9 @@ const SessionHeader = ({
     <Box>
       <Typography variant={"caption"} display={"block"}>
         Category: {currentCategory.name}
+      </Typography>
+      <Typography variant={"caption"} display={"block"}>
+        Incorrect Answer Penalty: {currentQuestion.incorrectAnswerPenalty}
       </Typography>
       <Typography variant={"overline"} display={"block"}>
         Question:
