@@ -1,6 +1,7 @@
 // @flow
 import React, { useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
+import Backdrop from "@material-ui/core/Backdrop";
 import Box from "@material-ui/core/Box";
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
@@ -22,7 +23,7 @@ type Props = {
   currentCategory: CategoryType
 };
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme => ({
   pageContainer: {
     paddingBottom: "48px"
   },
@@ -36,8 +37,27 @@ const useStyles = makeStyles({
   },
   divider: {
     margin: "16px 0"
+  },
+  backdrop: {
+    zIndex: theme.zIndex.drawer + 1,
+    padding: "24px"
+  },
+  pendingBackdrop: {
+    backgroundColor: "rgba(0, 0, 0, .9)"
+  },
+  refreshedBackdrop: {
+    backgroundColor: "rgba(38, 36, 191, .9)"
+  },
+  correctBackdrop: {
+    backgroundColor: "rgba(58, 183, 58, .9)"
+  },
+  incorrectBackdrop: {
+    backgroundColor: "rgba(191, 36, 36, .9)"
+  },
+  backdropText: {
+    color: "#fff"
   }
-});
+}));
 
 const defaultAnswer = (categoryUid, questionUid) => {
   return {
@@ -57,6 +77,7 @@ const CurrentQuestion = (props: Props) => {
     defaultAnswer(currentCategory.uid, currentQuestion.uid)
   );
   const [submitted, setSubmitted] = useState(false);
+  const [backdropOpen, setBackdropOpen] = useState(false);
   const invalid =
     answer.body === "" ||
     (currentCategory.wagerType === "oneThroughSix" && answer.wagerAmount === 0);
@@ -67,14 +88,17 @@ const CurrentQuestion = (props: Props) => {
         answer => answer.questionUid === currentQuestion.uid
       );
 
-      setAnswer(
-        pastAnswer || defaultAnswer(currentCategory.uid, currentQuestion.uid)
-      );
+      const newAnswer =
+        pastAnswer || defaultAnswer(currentCategory.uid, currentQuestion.uid);
+
+      setAnswer(newAnswer);
 
       if (pastAnswer && pastAnswer.status === "refreshed") {
         setSubmitted(false);
+        setBackdropOpen(true);
       } else {
         setSubmitted(!!pastAnswer);
+        setBackdropOpen(newAnswer.status !== "draft");
       }
     },
     [currentQuestion, currentCategory, team.answers]
@@ -105,8 +129,48 @@ const CurrentQuestion = (props: Props) => {
     firestore.team(triviaSessionUid, team.uid).update({ answers });
   };
 
+  const handleBackdropClose = () => {
+    if (answer.status !== "refreshed") return null;
+
+    setBackdropOpen(false);
+  };
+
+  const backdropText = () => {
+    const status = answer.status;
+    const amount = answer.wagerAwardedAmount || 0;
+
+    if (status === "refreshed") {
+      return "The admin has allowed you to update your answer! Click your screen to update and resubmit.";
+    } else if (status === "pending") {
+      return "Waiting for admin to grade your answer...";
+    } else if (status === "incorrect") {
+      const messageStart = "Your answer was incorrect.";
+
+      if (amount === 0) {
+        return `${messageStart} You received 0 points.`;
+      } else {
+        return `${messageStart} You lost ${amount * -1} points.`;
+      }
+    } else if (status === "correct") {
+      return `Your answer was correct! You received ${amount} points.`;
+    }
+  };
+
   return (
     <Box className={classes.pageContainer}>
+      <Backdrop
+        className={`${classes[`${answer.status}Backdrop`]} ${classes.backdrop}`}
+        open={backdropOpen}
+        onClick={handleBackdropClose}
+      >
+        <Typography
+          variant={"h4"}
+          className={classes.backdropText}
+          align="center"
+        >
+          {backdropText()}
+        </Typography>
+      </Backdrop>
       <Typography variant={"caption"} display={"block"}>
         Team: {team.name}
       </Typography>

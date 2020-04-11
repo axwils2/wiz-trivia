@@ -13,14 +13,9 @@ import TextField from "@material-ui/core/TextField";
 import Tooltip from "@material-ui/core/Tooltip";
 import IconButton from "@material-ui/core/IconButton";
 import DeleteIcon from "@material-ui/icons/Delete";
-import AddIcon from "@material-ui/icons/Add";
-import SaveIcon from "@material-ui/icons/Save";
 import CheckIcon from "@material-ui/icons/Check";
 import CloseIcon from "@material-ui/icons/Close";
-import RadioButtonUncheckedIcon from "@material-ui/icons/RadioButtonUnchecked";
 import RefreshIcon from "@material-ui/icons/Refresh";
-import RemoveIcon from "@material-ui/icons/Remove";
-import BlockIcon from "@material-ui/icons/Block";
 import orderBy from "lodash/orderBy";
 import find from "lodash/find";
 import findIndex from "lodash/findIndex";
@@ -135,20 +130,14 @@ const SessionTable = ({
       answers[answerIndex] = { ...answer, ...answerUpdates };
     } else {
       if (newStatus === "incorrect") {
-        if (editAmount === null || editAmount === undefined) {
+        if (
+          editAmount === null ||
+          editAmount === undefined ||
+          penaltyType === "zeroPoints"
+        ) {
           editAmount = 0;
-        } else if (editAmount > 0 && penaltyType === "zeroPoints") {
-          editAmount = 0;
-        } else if (editAmount === 0 && penaltyType === "zeroPoints") {
-          editAmount = 0;
-        } else if (editAmount < 0 && penaltyType === "zeroPoints") {
-          editAmount = 0;
-        } else if (editAmount > 0 && penaltyType === "negativePoints") {
+        } else if (penaltyType === "negativePoints") {
           editAmount = editAmount * -1;
-        } else if (editAmount === 0 && penaltyType === "negativePoints") {
-          editAmount = editAmount * -1;
-        } else if (editAmount < 0 && penaltyType === "negativePoints") {
-          editAmount = editAmount;
         }
       } else if (newStatus === "correct") {
         if (editAmount === null || editAmount === undefined) {
@@ -258,17 +247,6 @@ const SessionTable = ({
 
   const deleteTeam = (team: TeamType) => {
     firestore.team(triviaSession.uid, team.uid).delete();
-  };
-
-  const refreshTeamAnswer = (team: TeamType) => {
-    if (!currentQuestion) return null;
-
-    const answers = team.answers;
-    const answer = teamAnswer(team);
-    const answerIndex = findIndex(answers, oldAnswer => oldAnswer === answer);
-    answers[answerIndex] = { ...answer, status: "refreshed" };
-
-    firestore.team(triviaSession.uid, team.uid).update({ answers });
   };
 
   const incorrectButtonToolTipMessage = () => {
