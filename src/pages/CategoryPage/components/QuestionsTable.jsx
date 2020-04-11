@@ -21,6 +21,10 @@ import { firestore } from "components/Firebase";
 import { mapQuerySnapshot } from "functions/firestoreHelpers";
 import ButtonLink from "components/ButtonLink";
 import * as ROUTES from "constants/routes";
+import {
+  incorrectAnswerPenaltyLabel,
+  questionFormatLabel
+} from "functions/userFriendlyLabels";
 import NewQuestionModal from "./NewQuestionModal";
 import type { CategoryType } from "types/CategoryTypes";
 import type { QuestionType } from "types/QuestionTypes";
@@ -170,9 +174,11 @@ const QuestionsTable = ({
                   {question.body}
                 </TableCell>
                 <TableCell align="right">{question.answer}</TableCell>
-                <TableCell align="right">{question.format}</TableCell>
                 <TableCell align="right">
-                  {question.incorrectAnswerPenalty}
+                  {questionFormatLabel(question.format)}
+                </TableCell>
+                <TableCell align="right">
+                  {incorrectAnswerPenaltyLabel(question.incorrectAnswerPenalty)}
                 </TableCell>
                 <TableCell align="right">
                   {question.options.join(", ")}

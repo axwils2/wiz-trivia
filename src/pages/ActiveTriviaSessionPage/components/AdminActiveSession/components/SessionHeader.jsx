@@ -5,9 +5,24 @@ import Box from "@material-ui/core/Box";
 import Typography from "@material-ui/core/Typography";
 import Divider from "@material-ui/core/Divider";
 
+import {
+  incorrectAnswerPenaltyLabel,
+  questionFormatLabel
+} from "functions/userFriendlyLabels";
 import type { TriviaSessionType } from "types/TriviaSessionTypes";
+import SessionInfoModal from "./SessionInfoModal";
 
 const useStyles = makeStyles({
+  waitingContainer: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
+    marginBottom: "32px"
+  },
+  sessionInfoButton: {
+    minWidth: "fit-content",
+    marginLeft: "32px"
+  },
   divider: {
     margin: "16px 0"
   }
@@ -23,11 +38,16 @@ const SessionHeader = ({
 
   if (!currentQuestion || !currentCategory) {
     return (
-      <Typography variant={"h6"} gutterBottom>
-        Your session is now live. Currently waiting on players to join the
-        session. To begin the session and display questions to your teams, start
-        the session.
-      </Typography>
+      <Box className={classes.waitingContainer}>
+        <Typography variant={"h6"} display={"block"} gutterBottom>
+          Your session is now live. Currently waiting on players to join the
+          session. To begin the session and display questions to your teams,
+          proceed to Question 1.
+        </Typography>
+        <Box className={classes.sessionInfoButton}>
+          <SessionInfoModal accessCode={triviaSession.accessCode} />
+        </Box>
+      </Box>
     );
   }
 
@@ -37,10 +57,14 @@ const SessionHeader = ({
         Category: {currentCategory.name}
       </Typography>
       <Typography variant={"caption"} display={"block"}>
-        Incorrect Answer Penalty: {currentQuestion.incorrectAnswerPenalty}
+        Incorrect Answer Penalty:{" "}
+        {incorrectAnswerPenaltyLabel(currentQuestion.incorrectAnswerPenalty)}
+      </Typography>
+      <Typography variant={"caption"} display={"block"}>
+        Format: {questionFormatLabel(currentQuestion.format)}
       </Typography>
       <Typography variant={"overline"} display={"block"}>
-        Question:
+        Question {currentQuestion.order}:
       </Typography>
       <Typography variant={"h6"} display={"block"}>
         {currentQuestion.body}

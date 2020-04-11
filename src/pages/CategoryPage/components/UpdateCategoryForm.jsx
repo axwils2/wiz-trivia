@@ -11,6 +11,7 @@ import FormControl from "@material-ui/core/FormControl";
 import FormLabel from "@material-ui/core/FormLabel";
 
 import { firestore } from "components/Firebase";
+import { categoryWagerLabels } from "constants/userFriendlyLabels";
 import type { CategoryType } from "types/CategoryTypes";
 
 const UpdateCategoryForm = ({
@@ -51,21 +52,14 @@ const UpdateCategoryForm = ({
             value={wagerType}
             onChange={e => setWagerType(e.target.value)}
           >
-            <FormControlLabel
-              value="oneThroughSix"
-              control={<Radio />}
-              label="1-6"
-            />
-            <FormControlLabel
-              value="upToTwentyFive"
-              control={<Radio />}
-              label="Up To 25"
-            />
-            <FormControlLabel
-              value="adminChoice"
-              control={<Radio />}
-              label="Admin Choice"
-            />
+            {categoryWagerLabels.map(labelObject => (
+              <FormControlLabel
+                key={labelObject.value}
+                value={labelObject.value}
+                control={<Radio />}
+                label={labelObject.label}
+              />
+            ))}
           </RadioGroup>
         </FormControl>
       </Box>

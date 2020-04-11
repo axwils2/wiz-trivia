@@ -13,6 +13,7 @@ import FormLabel from "@material-ui/core/FormLabel";
 import toLower from "lodash/toLower";
 
 import { firestore } from "components/Firebase";
+import { categoryWagerLabels } from "constants/userFriendlyLabels";
 import * as ROUTES from "constants/routes";
 
 const NewCategoryForm = ({
@@ -64,21 +65,14 @@ const NewCategoryForm = ({
           value={wagerType}
           onChange={e => setWagerType(e.target.value)}
         >
-          <FormControlLabel
-            value="oneThroughSix"
-            control={<Radio />}
-            label="1-6"
-          />
-          <FormControlLabel
-            value="upToTwentyFive"
-            control={<Radio />}
-            label="Up To 25"
-          />
-          <FormControlLabel
-            value="adminChoice"
-            control={<Radio />}
-            label="Admin Choice"
-          />
+          {categoryWagerLabels.map(labelObject => (
+            <FormControlLabel
+              key={labelObject.value}
+              value={labelObject.value}
+              control={<Radio />}
+              label={labelObject.label}
+            />
+          ))}
         </RadioGroup>
       </FormControl>
       <Button

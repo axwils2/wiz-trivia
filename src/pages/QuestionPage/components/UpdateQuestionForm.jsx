@@ -13,6 +13,10 @@ import FormLabel from "@material-ui/core/FormLabel";
 import toLower from "lodash/toLower";
 
 import { firestore } from "components/Firebase";
+import {
+  incorrectAnswerPenaltyLabels,
+  questionFormatLabels
+} from "constants/userFriendlyLabels";
 import type { QuestionType } from "types/QuestionTypes";
 
 const useStyles = makeStyles({
@@ -96,21 +100,14 @@ const UpdateQuestionForm = ({
             value={format}
             onChange={e => setFormat(e.target.value)}
           >
-            <FormControlLabel
-              value="openResponse"
-              control={<Radio />}
-              label="Open Response"
-            />
-            <FormControlLabel
-              value="multipleChoice"
-              control={<Radio />}
-              label="Mulitple Choice"
-            />
-            <FormControlLabel
-              value="placeInOrder"
-              control={<Radio />}
-              label="Place In Order"
-            />
+            {questionFormatLabels.map(labelObject => (
+              <FormControlLabel
+                key={labelObject.value}
+                value={labelObject.value}
+                control={<Radio />}
+                label={labelObject.label}
+              />
+            ))}
           </RadioGroup>
         </FormControl>
         <FormControl component="fieldset">
@@ -121,16 +118,14 @@ const UpdateQuestionForm = ({
             value={incorrectAnswerPenalty}
             onChange={e => setIncorrectAnswerPenalty(e.target.value)}
           >
-            <FormControlLabel
-              value="zeroPoints"
-              control={<Radio />}
-              label="No Change To Total Points"
-            />
-            <FormControlLabel
-              value="negativePoints"
-              control={<Radio />}
-              label="Reduce Total Points By Wager Amount"
-            />
+            {incorrectAnswerPenaltyLabels.map(labelObject => (
+              <FormControlLabel
+                key={labelObject.value}
+                value={labelObject.value}
+                control={<Radio />}
+                label={labelObject.label}
+              />
+            ))}
           </RadioGroup>
         </FormControl>
       </Box>

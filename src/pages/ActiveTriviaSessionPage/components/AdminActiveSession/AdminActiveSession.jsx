@@ -72,9 +72,6 @@ const AdminActiveSession = ({ match }: { match: * }) => {
 
   return (
     <Box paddingBottom={"48px"}>
-      <Typography variant={"caption"} display={"block"}>
-        Access Code: {triviaSession.accessCode}
-      </Typography>
       <SessionHeader triviaSession={triviaSession} />
       <SessionTable
         triviaSession={triviaSession}
