@@ -22,7 +22,9 @@ const LandingPage = ({ history }: { history: * }) => {
 
   useEffect(
     () => {
-      const cookie = cookies.get("wizTriviaSessionData");
+      const cookie = cookies.get(
+        process.env.REACT_APP_ACTIVE_SESSION_COOKIE_NAME
+      );
       if (!cookie || !cookie.triviaSessionUid) return;
 
       history.push(

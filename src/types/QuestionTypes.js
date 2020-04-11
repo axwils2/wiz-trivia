@@ -17,6 +17,8 @@ export type QuestionType = {
   format: QuestionFormatType,
   incorrectAnswerPenalty: QuestionIncorrectAnswerPenaltyType,
   options: Array<string>,
+  timerOn?: boolean,
+  timerEnd?: Date,
   categoryUid: string,
   triviaSessionUid: string
 };

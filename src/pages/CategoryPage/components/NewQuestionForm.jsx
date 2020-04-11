@@ -55,7 +55,7 @@ const NewQuestionForm = ({
       .add({
         body,
         bodyInsensitive: toLower(body),
-        createdAt: firestore.timestamp(),
+        createdAt: firestore.timestamp().now(),
         order: newOrderValue || 0,
         answer,
         format,

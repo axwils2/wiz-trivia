@@ -30,4 +30,4 @@ export const triviaSessionQuestions = (triviaSessionUid: string) =>
     .collectionGroup("questions")
     .where("triviaSessionUid", "==", triviaSessionUid);
 
-export const timestamp = () => firebaseTimestamp();
+export const timestamp = firebaseTimestamp;

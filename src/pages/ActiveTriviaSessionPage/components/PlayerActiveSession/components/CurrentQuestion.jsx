@@ -14,6 +14,7 @@ import type { TeamType, TeamAnswerType } from "types/TeamTypes";
 import type { QuestionType } from "types/QuestionTypes";
 import type { CategoryType } from "types/CategoryTypes";
 import { firestore } from "components/Firebase";
+import CountdownTimer from "components/CountdownTimer";
 import AnswerSection from "./AnswerSection";
 
 type Props = {
@@ -26,6 +27,11 @@ type Props = {
 const useStyles = makeStyles(theme => ({
   pageContainer: {
     paddingBottom: "48px"
+  },
+  questionDataContainer: {
+    display: "flex",
+    justifyContent: "space-between",
+    height: "48px"
   },
   buttonContainer: {
     position: "fixed",
@@ -171,12 +177,23 @@ const CurrentQuestion = (props: Props) => {
           {backdropText()}
         </Typography>
       </Backdrop>
-      <Typography variant={"caption"} display={"block"}>
-        Team: {team.name}
-      </Typography>
-      <Typography variant={"caption"} display={"block"}>
-        Category: {currentCategory.name}
-      </Typography>
+      <Box className={classes.questionDataContainer}>
+        <Box>
+          <Typography variant={"caption"} display={"block"}>
+            Team: {team.name}
+          </Typography>
+          <Typography variant={"caption"} display={"block"}>
+            Category: {currentCategory.name}
+          </Typography>
+        </Box>
+        {currentQuestion.timerOn &&
+          !submitted && (
+            <CountdownTimer
+              count={30}
+              onCountdownComplete={() => setSubmitted(true)}
+            />
+          )}
+      </Box>
       <Typography variant={"overline"} display={"block"}>
         Question:
       </Typography>

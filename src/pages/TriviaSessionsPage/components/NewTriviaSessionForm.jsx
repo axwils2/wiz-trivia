@@ -27,7 +27,7 @@ const NewTriviaSessionForm = ({ history }: { history: * }) => {
         nameInsensitive: toLower(name),
         status: "disabled",
         userUid: authUser.uid,
-        createdAt: firestore.timestamp()
+        createdAt: firestore.timestamp().now()
       })
       .then(docRef => {
         history.push(ROUTES.TRIVIA_SESSION.linkPath(docRef.id));

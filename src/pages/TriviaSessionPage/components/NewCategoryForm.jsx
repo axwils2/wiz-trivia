@@ -35,7 +35,7 @@ const NewCategoryForm = ({
       .add({
         name,
         nameInsensitive: toLower(name),
-        createdAt: firestore.timestamp(),
+        createdAt: firestore.timestamp().now(),
         order: newOrderValue || 0,
         wagerType
       })

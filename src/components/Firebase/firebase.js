@@ -18,6 +18,6 @@ if (!firebase.apps.length) {
 
 const auth = firebase.auth();
 const firestore = firebase.firestore();
-const timestamp = () => firebase.firestore.Timestamp.now();
+const timestamp = () => firebase.firestore.Timestamp;
 
 export { auth, firestore, timestamp };

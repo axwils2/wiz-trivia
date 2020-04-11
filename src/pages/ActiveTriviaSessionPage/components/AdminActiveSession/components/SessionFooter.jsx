@@ -1,20 +1,34 @@
 // @flow
 import React, { useEffect, useState } from "react";
+import { makeStyles } from "@material-ui/core/styles";
+import Box from "@material-ui/core/Box";
 import Button from "@material-ui/core/Button";
+import Tooltip from "@material-ui/core/Tooltip";
+import TimerIcon from "@material-ui/icons/Timer";
 import find from "lodash/find";
 
+import CountdownTimer from "components/CountdownTimer";
 import type { TriviaSessionType } from "types/TriviaSessionTypes";
 import type { CategoryType } from "types/CategoryTypes";
 import type { QuestionType } from "types/QuestionTypes";
 
 type Props = {
   triviaSession: TriviaSessionType,
-  updateTriviaSession: (triviaSession: $Shape<TriviaSessionType>) => void,
+  updateTriviaSession: (updates: $Shape<TriviaSessionType>) => void,
   categories: Array<CategoryType>,
   questions: Array<QuestionType>
 };
 
+const useStyles = makeStyles({
+  container: {
+    display: "flex",
+    width: "100%",
+    justifyContent: "flex-end"
+  }
+});
+
 const SessionFooter = (props: Props) => {
+  const classes = useStyles();
   const { triviaSession, updateTriviaSession, categories, questions } = props;
   const { currentQuestion, currentCategory } = triviaSession;
   const [nextQuestion, setNextQuestion] = useState(null);
@@ -77,6 +91,28 @@ const SessionFooter = (props: Props) => {
     [currentQuestion, currentCategory, questions, categories]
   );
 
+  const startTimer = () => {
+    if (!currentQuestion) return null;
+
+    updateTriviaSession({
+      currentQuestion: { ...currentQuestion, timerOn: true }
+    });
+  };
+
+  const timerButtonText = () => {
+    if (!currentQuestion) return null;
+    const timerOn = currentQuestion.timerOn;
+    if (!timerOn) {
+      return (
+        <Tooltip title={"Start 30 second timer for remaining teams"}>
+          <TimerIcon color={"inherit"} />
+        </Tooltip>
+      );
+    }
+
+    return <CountdownTimer count={30} size={"small"} />;
+  };
+
   if (sessionComplete) {
     return (
       <Button
@@ -94,20 +130,32 @@ const SessionFooter = (props: Props) => {
   if (!nextQuestion || !nextCategory) return null;
 
   return (
-    <Button
-      variant={"contained"}
-      color={"primary"}
-      onClick={() =>
-        updateTriviaSession({
-          currentQuestion: nextQuestion,
-          currentCategory: nextCategory
-        })
-      }
-      size={"large"}
-      style={{ float: "right" }}
-    >
-      Proceed to Category {nextCategory.order}, Question {nextQuestion.order}
-    </Button>
+    <Box className={classes.container}>
+      {currentQuestion && (
+        <Button
+          variant={"contained"}
+          color={"primary"}
+          onClick={startTimer}
+          size={"large"}
+          style={{ marginRight: "8px" }}
+        >
+          {timerButtonText()}
+        </Button>
+      )}
+      <Button
+        variant={"contained"}
+        color={"primary"}
+        onClick={() =>
+          updateTriviaSession({
+            currentQuestion: nextQuestion,
+            currentCategory: nextCategory
+          })
+        }
+        size={"large"}
+      >
+        Proceed to Category {nextCategory.order}, Question {nextQuestion.order}
+      </Button>
+    </Box>
   );
 };
 
