@@ -95,7 +95,7 @@ const SessionFooter = (props: Props) => {
     if (!currentQuestion) return null;
 
     updateTriviaSession({
-      currentQuestion: { ...currentQuestion, timerOn: true }
+      currentQuestion: { ...currentQuestion, timerOn: !currentQuestion.timerOn }
     });
   };
 
