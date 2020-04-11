@@ -9,7 +9,6 @@ import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
-import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import Tooltip from "@material-ui/core/Tooltip";
 import IconButton from "@material-ui/core/IconButton";
@@ -54,6 +53,7 @@ const useStyles = makeStyles({
     width: "108px"
   },
   draft: {},
+  refreshed: {},
   pending: {
     backgroundColor: "#ddddd3"
   },
@@ -239,6 +239,17 @@ const SessionTable = ({
     firestore.team(triviaSession.uid, team.uid).delete();
   };
 
+  const refreshTeamAnswer = (team: TeamType) => {
+    if (!currentQuestion) return null;
+
+    const answers = team.answers;
+    const answer = teamAnswer(team);
+    const answerIndex = findIndex(answers, oldAnswer => oldAnswer === answer);
+    answers[answerIndex] = { ...answer, status: "refreshed" };
+
+    firestore.team(triviaSession.uid, team.uid).update({ answers });
+  };
+
   return (
     <TableContainer component={Paper} className={classes.table}>
       <Table aria-label="simple table">
@@ -272,8 +283,7 @@ const SessionTable = ({
           {orderBy(teams, [orderedBy], [orderDirection]).map(team => {
             const answer = teamAnswer(team);
             const editAmount = wagerAwardedAmount(team);
-            const quickActionsDisabled =
-              editAmount === null || editAmount == undefined;
+            const disabled = !answer.body;
 
             return (
               <TableRow
@@ -303,7 +313,7 @@ const SessionTable = ({
                     name={`wagerAwardedAmount-${team.uid}-${
                       answer.questionUid
                     }`}
-                    disabled={!answer.body}
+                    disabled={disabled}
                     variant={"outlined"}
                     className={classes.editAmount}
                     onChange={e =>
@@ -314,61 +324,83 @@ const SessionTable = ({
                 </TableCell>
                 <TableCell align="right" className={classes.quickActions}>
                   <Tooltip title="Make Edit Points Positive" placement={"top"}>
-                    <IconButton
-                      disabled={quickActionsDisabled}
-                      edge={"start"}
-                      color={"inherit"}
-                      aria-label={"delete"}
-                      size={"small"}
-                      onClick={() =>
-                        quickUpdateWagerAwardedAmounts(team, "positive")
-                      }
-                    >
-                      <AddIcon fontSize={"small"} />
-                    </IconButton>
+                    <span>
+                      <IconButton
+                        disabled={disabled}
+                        edge={"start"}
+                        color={"inherit"}
+                        aria-label={"delete"}
+                        size={"small"}
+                        onClick={() =>
+                          quickUpdateWagerAwardedAmounts(team, "positive")
+                        }
+                      >
+                        <AddIcon fontSize={"small"} />
+                      </IconButton>
+                    </span>
                   </Tooltip>
                   <Tooltip title="Make Edit Points 0" placement={"top"}>
-                    <IconButton
-                      disabled={quickActionsDisabled}
-                      edge={"start"}
-                      color={"inherit"}
-                      aria-label={"delete"}
-                      size={"small"}
-                      onClick={() =>
-                        quickUpdateWagerAwardedAmounts(team, "zero")
-                      }
-                    >
-                      <RadioButtonUncheckedIcon fontSize={"small"} />
-                    </IconButton>
+                    <span>
+                      <IconButton
+                        disabled={disabled}
+                        edge={"start"}
+                        color={"inherit"}
+                        aria-label={"delete"}
+                        size={"small"}
+                        onClick={() =>
+                          quickUpdateWagerAwardedAmounts(team, "zero")
+                        }
+                      >
+                        <RadioButtonUncheckedIcon fontSize={"small"} />
+                      </IconButton>
+                    </span>
                   </Tooltip>
                   <Tooltip title="Make Edit Points Negative" placement={"top"}>
-                    <IconButton
-                      disabled={quickActionsDisabled}
-                      edge={"start"}
-                      color={"inherit"}
-                      aria-label={"delete"}
-                      size={"small"}
-                      onClick={() =>
-                        quickUpdateWagerAwardedAmounts(team, "negative")
-                      }
-                    >
-                      <RemoveIcon fontSize={"small"} />
-                    </IconButton>
+                    <span>
+                      <IconButton
+                        disabled={disabled}
+                        edge={"start"}
+                        color={"inherit"}
+                        aria-label={"delete"}
+                        size={"small"}
+                        onClick={() =>
+                          quickUpdateWagerAwardedAmounts(team, "negative")
+                        }
+                      >
+                        <RemoveIcon fontSize={"small"} />
+                      </IconButton>
+                    </span>
+                  </Tooltip>
+                  <Tooltip title="Allow Team To Answer Again" placement={"top"}>
+                    <span>
+                      <IconButton
+                        disabled={disabled}
+                        edge={"start"}
+                        color={"inherit"}
+                        aria-label={"delete"}
+                        size={"small"}
+                        onClick={() => refreshTeamAnswer(team)}
+                      >
+                        <RefreshIcon fontSize={"small"} />
+                      </IconButton>
+                    </span>
                   </Tooltip>
                   <Tooltip
                     title="Save And Update Total Points"
                     placement={"top"}
                   >
-                    <IconButton
-                      disabled={quickActionsDisabled}
-                      edge={"start"}
-                      color={"inherit"}
-                      aria-label={"delete"}
-                      size={"small"}
-                      onClick={() => updateTeamAnswer(team)}
-                    >
-                      <SaveIcon fontSize={"small"} />
-                    </IconButton>
+                    <span>
+                      <IconButton
+                        disabled={disabled}
+                        edge={"start"}
+                        color={"inherit"}
+                        aria-label={"delete"}
+                        size={"small"}
+                        onClick={() => updateTeamAnswer(team)}
+                      >
+                        <SaveIcon fontSize={"small"} />
+                      </IconButton>
+                    </span>
                   </Tooltip>
                 </TableCell>
               </TableRow>

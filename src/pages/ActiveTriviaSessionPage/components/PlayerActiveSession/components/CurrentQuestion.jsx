@@ -2,12 +2,12 @@
 import React, { useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Box from "@material-ui/core/Box";
-import Container from "@material-ui/core/Container";
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
 import Divider from "@material-ui/core/Divider";
 import filter from "lodash/filter";
 import map from "lodash/map";
+import findIndex from "lodash/findIndex";
 
 import type { TeamType, TeamAnswerType } from "types/TeamTypes";
 import type { QuestionType } from "types/QuestionTypes";
@@ -70,7 +70,12 @@ const CurrentQuestion = (props: Props) => {
       setAnswer(
         pastAnswer || defaultAnswer(currentCategory.uid, currentQuestion.uid)
       );
-      setSubmitted(!!pastAnswer);
+
+      if (pastAnswer && pastAnswer.status === "refreshed") {
+        setSubmitted(false);
+      } else {
+        setSubmitted(!!pastAnswer);
+      }
     },
     [currentQuestion, currentCategory, team.answers]
   );
@@ -82,8 +87,20 @@ const CurrentQuestion = (props: Props) => {
   const onSubmit = () => {
     setSubmitted(true);
 
-    const answers = team.answers;
-    answers.push({ ...answer, status: "pending" });
+    const answers = Array.from(team.answers);
+    const pastAnswer = answers.find(
+      answer => answer.questionUid === currentQuestion.uid
+    );
+
+    if (pastAnswer) {
+      const pastAnswerIndex = findIndex(
+        answers,
+        answer => answer.questionUid === currentQuestion.uid
+      );
+      answers[pastAnswerIndex] = { ...answer, status: "pending" };
+    } else {
+      answers.push({ ...answer, status: "pending" });
+    }
 
     firestore.team(triviaSessionUid, team.uid).update({ answers });
   };

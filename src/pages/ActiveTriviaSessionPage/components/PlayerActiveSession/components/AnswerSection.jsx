@@ -10,7 +10,7 @@ import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Slider from "@material-ui/core/Slider";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 
-import type { TeamAnswerType } from "types/TeamTypes";
+import type { TeamAnswerType, TeamAnswerStatusType } from "types/TeamTypes";
 import type { QuestionType, QuestionFormatType } from "types/QuestionTypes";
 import type { CategoryType, CategoryWagerType } from "types/CategoryTypes";
 
@@ -34,7 +34,8 @@ type WagerFormProps = {
   wagerAmount: ?number,
   updateAnswer: (update: $Shape<TeamAnswerType>) => void,
   wagerType: CategoryWagerType,
-  previousCategoryWagerAmounts: Array<number>
+  previousCategoryWagerAmounts: Array<number>,
+  status: TeamAnswerStatusType
 };
 
 const useStyles = makeStyles(theme => ({
@@ -59,8 +60,7 @@ const AnswerForm = ({
   questionUid
 }: AnswerFormProps) => {
   const classes = useStyles();
-  console.log(answerBody);
-  console.log(questionUid);
+
   if (questionFormat === "multipleChoice") {
     return (
       <RadioGroup
@@ -126,7 +126,8 @@ const WagerForm = ({
   wagerAmount,
   updateAnswer,
   wagerType,
-  previousCategoryWagerAmounts
+  previousCategoryWagerAmounts,
+  status
 }: WagerFormProps) => {
   const classes = useStyles();
 
@@ -145,7 +146,10 @@ const WagerForm = ({
             value={value}
             control={<Radio />}
             label={value}
-            disabled={previousCategoryWagerAmounts.includes(value)}
+            disabled={
+              previousCategoryWagerAmounts.includes(value) ||
+              status === "refreshed"
+            }
           />
         ))}
       </RadioGroup>
@@ -161,6 +165,7 @@ const WagerForm = ({
           onChange={(_e, value) => updateAnswer({ wagerAmount: value })}
           marks={[{ value: 0, label: "0" }, { value: 25, label: "25" }]}
           valueLabelDisplay="on"
+          disabled={status === "refreshed"}
         />
       </Box>
     );
@@ -219,6 +224,7 @@ const AnswerSection = (props: AnswerSectionProps) => {
         updateAnswer={updateAnswer}
         wagerType={currentCategory.wagerType}
         previousCategoryWagerAmounts={previousCategoryWagerAmounts}
+        status={answer.status}
       />
     </Box>
   );

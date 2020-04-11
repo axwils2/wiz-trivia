@@ -2,6 +2,7 @@
 export type TeamAnswerStatusType =
   | "draft"
   | "pending"
+  | "refreshed"
   | "incorrect"
   | "correct";
 
