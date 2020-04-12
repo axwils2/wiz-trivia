@@ -27,7 +27,7 @@ const SignInForm = ({ history }: { history: * }) => {
   };
 
   return (
-    <form onSubmit={onSubmit}>
+    <form onSubmit={onSubmit} style={{ marginBottom: "16px" }}>
       <TextField
         name="email"
         onChange={e => setEmail(e.target.value)}

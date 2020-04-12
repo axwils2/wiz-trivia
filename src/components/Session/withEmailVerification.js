@@ -1,5 +1,9 @@
 // @flow
 import React from "react";
+import Container from "@material-ui/core/Container";
+import Typography from "@material-ui/core/Typography";
+import Button from "@material-ui/core/Button";
+
 import AuthUserContext from "./context";
 import { withFirebase } from "../Firebase";
 
@@ -28,28 +32,32 @@ const withEmailVerification = Component => {
         <AuthUserContext.Consumer>
           {authUser =>
             needsEmailVerification(authUser) ? (
-              <div>
+              <Container maxWidth={"sm"} style={{ marginTop: "24px" }}>
                 {this.state.isSent ? (
-                  <p>
+                  <Typography>
                     E-Mail confirmation sent: Check you E-Mails (Spam folder
                     included) for a confirmation E-Mail. Refresh this page once
                     you confirmed your E-Mail.
-                  </p>
+                  </Typography>
                 ) : (
-                  <p>
+                  <Typography>
                     Verify your E-Mail: Check you E-Mails (Spam folder included)
                     for a confirmation E-Mail or send another confirmation
                     E-Mail.
-                  </p>
+                  </Typography>
                 )}
-                <button
-                  type="button"
+                <Button
+                  variant={"contained"}
+                  size={"large"}
+                  color={"primary"}
+                  style={{ marginTop: "24px" }}
+                  fullWidth
                   onClick={this.onSendEmailVerification}
                   disabled={this.state.isSent}
                 >
                   Send confirmation E-Mail
-                </button>
-              </div>
+                </Button>
+              </Container>
             ) : (
               <Component {...this.props} />
             )
