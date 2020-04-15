@@ -10,8 +10,10 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
 import Button from "@material-ui/core/Button";
+import findIndex from "lodash/findIndex";
 
 import { firestore } from "components/Firebase";
+import type { TriviaSessionStatusType } from "types/TriviaSessionTypes";
 import { AuthUserContext } from "components/Session";
 import { mapQuerySnapshot } from "functions/firestoreHelpers";
 import ButtonLink from "components/ButtonLink";
@@ -45,6 +47,11 @@ const TriviaSessionsTable = ({ history }: { history: * }) => {
     [authUser.uid]
   );
 
+  const onButtonClick = (uid: string, status: TriviaSessionStatusType) => {
+    if (status === "complete") return resetSession(uid);
+    return activateSession(uid);
+  };
+
   const activateSession = (uid: string) => {
     firestore
       .triviaSession(uid)
@@ -52,6 +59,32 @@ const TriviaSessionsTable = ({ history }: { history: * }) => {
       .then(() => {
         history.push(ROUTES.ACTIVE_TRIVIA_SESSION.linkPath(uid));
       });
+  };
+
+  const resetSession = (uid: string) => {
+    const updates = {
+      currentQuestion: null,
+      currentCategory: null,
+      status: "disabled"
+    };
+    firestore
+      .triviaSession(uid)
+      .update(updates)
+      .then(() => {
+        const sessionsClone = Array.from(sessions);
+        const sessionIndex = findIndex(
+          sessions,
+          session => session.uid === uid
+        );
+        sessionsClone[sessionIndex] = { ...sessions[sessionIndex], ...updates };
+        setSessions(sessionsClone);
+      });
+  };
+
+  const buttonText = (status: TriviaSessionStatusType) => {
+    if (status === "disabled") return "Start";
+    if (status === "complete") return "Reset";
+    return "View";
   };
 
   if (sessions.length === 0) {
@@ -79,16 +112,14 @@ const TriviaSessionsTable = ({ history }: { history: * }) => {
               <TableCell align="right">{session.accessCode}</TableCell>
               <TableCell align="right">{session.status}</TableCell>
               <TableCell align="right" className={classes.smallCell}>
-                {session.status !== "complete" && (
-                  <Button
-                    onClick={() => activateSession(session.uid)}
-                    variant={"contained"}
-                    size={"small"}
-                    color={"primary"}
-                  >
-                    {session.status === "disabled" ? "Start" : "View"}
-                  </Button>
-                )}
+                <Button
+                  onClick={() => onButtonClick(session.uid, session.status)}
+                  variant={"contained"}
+                  size={"small"}
+                  color={"primary"}
+                >
+                  {buttonText(session.status)}
+                </Button>
               </TableCell>
               <TableCell align="right" className={classes.smallCell}>
                 <ButtonLink

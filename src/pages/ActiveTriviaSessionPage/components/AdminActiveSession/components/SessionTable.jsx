@@ -120,7 +120,10 @@ const SessionTable = ({
 
     const answers = team.answers;
     const answer = teamAnswer(team);
-    const answerIndex = findIndex(answers, oldAnswer => oldAnswer === answer);
+    const answerIndex = findIndex(
+      answers,
+      oldAnswer => oldAnswer.questionUid === answer.questionUid
+    );
     const penaltyType = currentQuestion.incorrectAnswerPenalty;
     let editAmount = wagerAwardedAmount(team) || 0;
     const answerUpdates = { status: newStatus, wagerAwardedAmount: editAmount };
@@ -158,7 +161,12 @@ const SessionTable = ({
       }
       answerUpdates["wagerAwardedAmount"] = newAmount;
 
-      answers[answerIndex] = { ...answer, ...answerUpdates };
+      if (answerIndex === -1) {
+        answers.push({ ...answer, ...answerUpdates, wagerAmount: newAmount });
+      } else {
+        answers[answerIndex] = { ...answer, ...answerUpdates };
+      }
+
       pointsTotal = sumBy(answers, answer => answer.wagerAwardedAmount || 0);
     }
 
@@ -175,14 +183,24 @@ const SessionTable = ({
 
     const safeWagerAwardedAmounts = Array.from(wagerAwardedAmounts);
     const index = wagerAwardedAmountObjectIndex(team);
-    if (index === null) return null;
+    if (index === null || index === -1) {
+      const wagerAwardedAmountObject = {
+        teamUid: team.uid,
+        questionUid: currentQuestion.uid,
+        amount: wagerAwardedAmount
+      };
 
-    const wagerAwardedAmountObject = wagerAwardedAmounts[index];
+      safeWagerAwardedAmounts.push(wagerAwardedAmountObject);
+      setWagerAwardedAmounts(safeWagerAwardedAmounts);
+      return wagerAwardedAmountObject;
+    } else {
+      const wagerAwardedAmountObject = wagerAwardedAmounts[index];
 
-    wagerAwardedAmountObject["amount"] = wagerAwardedAmount;
-    safeWagerAwardedAmounts[index] = wagerAwardedAmountObject;
-    setWagerAwardedAmounts(safeWagerAwardedAmounts);
-    return wagerAwardedAmountObject;
+      wagerAwardedAmountObject["amount"] = wagerAwardedAmount;
+      safeWagerAwardedAmounts[index] = wagerAwardedAmountObject;
+      setWagerAwardedAmounts(safeWagerAwardedAmounts);
+      return wagerAwardedAmountObject;
+    }
   };
 
   const wagerAwardedAmount = (team: TeamType) => {
@@ -220,7 +238,12 @@ const SessionTable = ({
       team.answers,
       answer => answer.questionUid === currentQuestion.uid
     );
-    if (!answer) return initialAnswer;
+    if (!answer)
+      return {
+        ...initialAnswer,
+        questionUid: currentQuestion.uid,
+        categoryUid: currentCategory.uid
+      };
 
     return answer;
   };
@@ -323,7 +346,6 @@ const SessionTable = ({
                     name={`wagerAwardedAmount-${team.uid}-${
                       answer.questionUid
                     }`}
-                    disabled={disabled}
                     variant={"outlined"}
                     className={classes.editAmount}
                     onChange={e =>
@@ -339,7 +361,6 @@ const SessionTable = ({
                   >
                     <span>
                       <IconButton
-                        disabled={disabled}
                         edge={"start"}
                         aria-label={"incorrect"}
                         size={"small"}
@@ -370,7 +391,6 @@ const SessionTable = ({
                   >
                     <span>
                       <IconButton
-                        disabled={disabled}
                         edge={"start"}
                         aria-label={"correct"}
                         size={"small"}

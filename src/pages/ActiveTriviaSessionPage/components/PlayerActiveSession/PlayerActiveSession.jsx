@@ -1,17 +1,33 @@
 // @flow
 import React, { useState, useEffect } from "react";
+import { withRouter } from "react-router-dom";
 import Cookies from "universal-cookie";
+import { makeStyles } from "@material-ui/core/styles";
 import Box from "@material-ui/core/Box";
+import Button from "@material-ui/core/Button";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import Typography from "@material-ui/core/Typography";
 
 import { firestore } from "components/Firebase";
 import { docDataWithId } from "functions/firestoreHelpers";
 import { CurrentQuestion } from "./components";
+import * as ROUTES from "constants/routes";
 
 const cookies = new Cookies();
 
-const PlayerActiveSession = () => {
+const useStyles = makeStyles({
+  buttonContainer: {
+    position: "fixed",
+    bottom: 0,
+    left: 0,
+    padding: "0 16px 16px",
+    width: "100%",
+    textAlign: "center"
+  }
+});
+
+const PlayerActiveSession = ({ history }: { history: * }) => {
+  const classes = useStyles();
   const [cookieData, setCookieData] = useState({});
   const [team, setTeam] = useState(null);
   const [triviaSession, setTriviaSession] = useState(null);
@@ -57,6 +73,15 @@ const PlayerActiveSession = () => {
     [cookieData.triviaSessionUid, cookieData.teamUid]
   );
 
+  const clearCookie = () => {
+    console.log(process.env.REACT_APP_ACTIVE_SESSION_COOKIE_NAME);
+    cookies.remove(process.env.REACT_APP_ACTIVE_SESSION_COOKIE_NAME, {
+      path: "/"
+    });
+
+    history.push(ROUTES.LANDING);
+  };
+
   if (loading)
     return (
       <Box textAlign={"center"} marginTop={"48px"}>
@@ -67,11 +92,33 @@ const PlayerActiveSession = () => {
   if (!triviaSession || !team)
     return <Typography>Error loading data</Typography>;
 
-  if (triviaSession.status !== "active")
+  if (triviaSession.status === "disabled")
     return (
-      <Typography>
-        This trivia session is either disabled or complete!
+      <Typography variant={"h6"}>
+        This trivia session is either disabled!
       </Typography>
+    );
+
+  if (triviaSession.status === "complete")
+    return (
+      <Box>
+        <Typography variant={"h6"}>
+          This session is now complete! You finished with a score of{" "}
+          {team.pointsTotal}!
+        </Typography>
+        <Box className={classes.buttonContainer}>
+          <Button
+            variant={"contained"}
+            fullWidth
+            color={"primary"}
+            size={"large"}
+            onClick={clearCookie}
+            style={{ maxWidth: "480px" }}
+          >
+            Leave Session
+          </Button>
+        </Box>
+      </Box>
     );
 
   if (!triviaSession.currentQuestion || !triviaSession.currentCategory)
@@ -91,4 +138,4 @@ const PlayerActiveSession = () => {
   );
 };
 
-export default PlayerActiveSession;
+export default withRouter(PlayerActiveSession);
