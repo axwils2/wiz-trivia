@@ -26,7 +26,8 @@ const useStyles = makeStyles({
     textAlign: "center"
   },
   totalPoints: {
-    marginTop: "64px"
+    marginTop: "64px",
+    fontWeight: "bold"
   }
 });
 
