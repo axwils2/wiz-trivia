@@ -16,7 +16,7 @@ import * as ROUTES from "constants/routes";
 
 const cookies = new Cookies();
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme => ({
   buttonContainer: {
     position: "fixed",
     bottom: 0,
@@ -25,11 +25,20 @@ const useStyles = makeStyles({
     width: "100%",
     textAlign: "center"
   },
+  totalPointsContainer: {
+    margin: "64px auto 0",
+    border: `6px solid ${theme.palette.secondary.main}`,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: "50%",
+    height: "280px",
+    width: "280px"
+  },
   totalPoints: {
-    marginTop: "64px",
     fontWeight: "bold"
   }
-});
+}));
 
 const PlayerActiveSession = ({ history }: { history: * }) => {
   const classes = useStyles();
@@ -107,17 +116,19 @@ const PlayerActiveSession = ({ history }: { history: * }) => {
     return (
       <Box>
         <Confetti />
-        <Typography variant={"h6"}>
+        <Typography variant={"h6"} align={"center"}>
           This session is now complete! You finished with a score of:
         </Typography>
-        <Typography
-          variant={"h1"}
-          display={"block"}
-          align={"center"}
-          className={classes.totalPoints}
-        >
-          {team.pointsTotal}
-        </Typography>
+        <Box className={classes.totalPointsContainer}>
+          <Typography
+            variant={"h1"}
+            display={"block"}
+            align={"center"}
+            className={classes.totalPoints}
+          >
+            {team.pointsTotal}
+          </Typography>
+        </Box>
         <Box className={classes.buttonContainer}>
           <Button
             variant={"contained"}

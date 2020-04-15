@@ -45,7 +45,6 @@ const AddTeamModal = ({ triviaSessionUid }: { triviaSessionUid: string }) => {
       })
       .then(() => {
         setName("");
-        handleClose();
       });
   };
 
