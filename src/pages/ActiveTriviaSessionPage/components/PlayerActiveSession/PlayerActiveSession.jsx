@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { withRouter } from "react-router-dom";
 import Cookies from "universal-cookie";
+import Confetti from "react-confetti";
 import { makeStyles } from "@material-ui/core/styles";
 import Box from "@material-ui/core/Box";
 import Button from "@material-ui/core/Button";
@@ -23,6 +24,9 @@ const useStyles = makeStyles({
     padding: "0 16px 16px",
     width: "100%",
     textAlign: "center"
+  },
+  totalPoints: {
+    marginTop: "64px"
   }
 });
 
@@ -74,7 +78,6 @@ const PlayerActiveSession = ({ history }: { history: * }) => {
   );
 
   const clearCookie = () => {
-    console.log(process.env.REACT_APP_ACTIVE_SESSION_COOKIE_NAME);
     cookies.remove(process.env.REACT_APP_ACTIVE_SESSION_COOKIE_NAME, {
       path: "/"
     });
@@ -102,9 +105,17 @@ const PlayerActiveSession = ({ history }: { history: * }) => {
   if (triviaSession.status === "complete")
     return (
       <Box>
+        <Confetti />
         <Typography variant={"h6"}>
-          This session is now complete! You finished with a score of{" "}
-          {team.pointsTotal}!
+          This session is now complete! You finished with a score of:
+        </Typography>
+        <Typography
+          variant={"h1"}
+          display={"block"}
+          align={"center"}
+          className={classes.totalPoints}
+        >
+          {team.pointsTotal}
         </Typography>
         <Box className={classes.buttonContainer}>
           <Button
