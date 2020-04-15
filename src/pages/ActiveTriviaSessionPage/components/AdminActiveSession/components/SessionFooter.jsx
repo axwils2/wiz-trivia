@@ -8,6 +8,7 @@ import TimerIcon from "@material-ui/icons/Timer";
 import find from "lodash/find";
 
 import CountdownTimer from "components/CountdownTimer";
+import AddTeamModal from "./AddTeamModal";
 import type { TriviaSessionType } from "types/TriviaSessionTypes";
 import type { CategoryType } from "types/CategoryTypes";
 import type { QuestionType } from "types/QuestionTypes";
@@ -23,7 +24,7 @@ const useStyles = makeStyles({
   container: {
     display: "flex",
     width: "100%",
-    justifyContent: "flex-end"
+    justifyContent: "space-between"
   }
 });
 
@@ -131,30 +132,34 @@ const SessionFooter = (props: Props) => {
 
   return (
     <Box className={classes.container}>
-      {currentQuestion && (
+      <AddTeamModal triviaSessionUid={triviaSession.uid} />
+      <Box>
+        {currentQuestion && (
+          <Button
+            variant={"contained"}
+            color={"primary"}
+            onClick={startTimer}
+            size={"large"}
+            style={{ marginRight: "8px" }}
+          >
+            {timerButtonText()}
+          </Button>
+        )}
         <Button
           variant={"contained"}
           color={"primary"}
-          onClick={startTimer}
+          onClick={() =>
+            updateTriviaSession({
+              currentQuestion: nextQuestion,
+              currentCategory: nextCategory
+            })
+          }
           size={"large"}
-          style={{ marginRight: "8px" }}
         >
-          {timerButtonText()}
+          Proceed to Category {nextCategory.order}, Question{" "}
+          {nextQuestion.order}
         </Button>
-      )}
-      <Button
-        variant={"contained"}
-        color={"primary"}
-        onClick={() =>
-          updateTriviaSession({
-            currentQuestion: nextQuestion,
-            currentCategory: nextCategory
-          })
-        }
-        size={"large"}
-      >
-        Proceed to Category {nextCategory.order}, Question {nextQuestion.order}
-      </Button>
+      </Box>
     </Box>
   );
 };
