@@ -5,6 +5,12 @@ export function mapQuerySnapshot(querySnapshot: *) {
   });
 }
 
+export function mapQuerySnapshotChanges(querySnapshot: *) {
+  return querySnapshot.docChanges().map(change => {
+    return docDataWithId(change.doc);
+  });
+}
+
 export function docDataWithId(doc: *) {
   return { ...doc.data(), uid: doc.id };
 }

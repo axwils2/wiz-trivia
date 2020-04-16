@@ -21,9 +21,14 @@ import find from "lodash/find";
 import findIndex from "lodash/findIndex";
 import flatten from "lodash/flatten";
 import sumBy from "lodash/sumBy";
+import reject from "lodash/reject";
 
 import { firestore } from "components/Firebase";
-import { mapQuerySnapshot } from "functions/firestoreHelpers";
+import {
+  mapQuerySnapshot,
+  mapQuerySnapshotChanges,
+  docDataWithId
+} from "functions/firestoreHelpers";
 import type { TriviaSessionType } from "types/TriviaSessionTypes";
 import type {
   TeamType,
@@ -90,21 +95,52 @@ const SessionTable = ({
       const unsubscribe = firestore
         .teams(triviaSession.uid)
         .onSnapshot(querySnapshot => {
+          const newData = mapQuerySnapshotChanges(querySnapshot);
           const data = mapQuerySnapshot(querySnapshot);
-          setTeams(data);
+          setTeams(prevTeams => {
+            const safeTeams = Array.from(prevTeams);
 
-          const amountsArray = flatten(
-            data.map(team => {
-              return team.answers.map(answer => {
-                return {
-                  teamUid: team.uid,
-                  questionUid: answer.questionUid,
-                  amount: defaultWagerAwardedAmount(answer)
-                };
-              });
-            })
-          );
-          setWagerAwardedAmounts(amountsArray);
+            querySnapshot.docChanges().forEach(change => {
+              const team = docDataWithId(change.doc);
+              const teamIndex = findIndex(
+                safeTeams,
+                safeTeam => safeTeam.uid === team.uid
+              );
+              if (change.type === "added" || change.type === "modified") {
+                if (teamIndex === -1) {
+                  safeTeams.push(team);
+                } else {
+                  safeTeams[teamIndex] = team;
+                }
+              } else {
+                safeTeams.splice(teamIndex, 1);
+              }
+            });
+
+            return safeTeams;
+          });
+
+          setWagerAwardedAmounts(prevArray => {
+            const safeArray = Array.from(prevArray);
+            const updatedUids = newData.map(data => data.uid);
+            const newSafeArray = reject(safeArray, row =>
+              updatedUids.includes(row.id)
+            );
+
+            newData.forEach(team => {
+              newSafeArray.push(
+                team.answers.map(answer => {
+                  return {
+                    teamUid: team.uid,
+                    questionUid: answer.questionUid,
+                    amount: defaultWagerAwardedAmount(answer)
+                  };
+                })
+              );
+            });
+
+            return flatten(newSafeArray);
+          });
         });
 
       return () => unsubscribe();
