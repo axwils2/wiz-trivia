@@ -156,7 +156,7 @@ const WagerForm = ({
     );
   } else if (wagerType === "upToTwentyFive") {
     return (
-      <Box width={"96%"} margin={"0 auto"}>
+      <Box width={"96%"} margin={"24px auto 0"}>
         <Slider
           value={wagerAmount || 0}
           aria-labelledby="discrete-slider-always"
