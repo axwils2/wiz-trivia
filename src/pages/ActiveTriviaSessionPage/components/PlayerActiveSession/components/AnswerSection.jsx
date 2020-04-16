@@ -158,7 +158,7 @@ const WagerForm = ({
     return (
       <Box width={"96%"} margin={"0 auto"}>
         <Slider
-          defaultValue={0}
+          value={wagerAmount || 0}
           aria-labelledby="discrete-slider-always"
           step={1}
           max={25}
