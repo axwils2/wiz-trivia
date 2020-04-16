@@ -124,7 +124,7 @@ const SessionTable = ({
             const safeArray = Array.from(prevArray);
             const updatedUids = newData.map(data => data.uid);
             const newSafeArray = reject(safeArray, row =>
-              updatedUids.includes(row.id)
+              updatedUids.includes(row.teamUid)
             );
 
             newData.forEach(team => {
