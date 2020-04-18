@@ -16,21 +16,33 @@ import type { QuestionType } from "types/QuestionTypes";
 type Props = {
   triviaSession: TriviaSessionType,
   updateTriviaSession: (updates: $Shape<TriviaSessionType>) => void,
+  completeTriviaSession: () => void,
   categories: Array<CategoryType>,
   questions: Array<QuestionType>
 };
 
 const useStyles = makeStyles({
-  container: {
+  activeContainer: {
     display: "flex",
     width: "100%",
     justifyContent: "space-between"
+  },
+  completeContainer: {
+    display: "flex",
+    width: "100%",
+    justifyContent: "flex-end"
   }
 });
 
 const SessionFooter = (props: Props) => {
   const classes = useStyles();
-  const { triviaSession, updateTriviaSession, categories, questions } = props;
+  const {
+    triviaSession,
+    updateTriviaSession,
+    completeTriviaSession,
+    categories,
+    questions
+  } = props;
   const { currentQuestion, currentCategory } = triviaSession;
   const [nextQuestion, setNextQuestion] = useState(null);
   const [nextCategory, setNextCategory] = useState(null);
@@ -116,22 +128,34 @@ const SessionFooter = (props: Props) => {
 
   if (sessionComplete) {
     return (
-      <Button
-        variant={"contained"}
-        color={"primary"}
-        onClick={() => updateTriviaSession({ status: "complete" })}
-        size={"large"}
-        style={{ float: "right" }}
-      >
-        Complete Session
-      </Button>
+      <Box className={classes.completeContainer}>
+        {currentQuestion && (
+          <Button
+            variant={"contained"}
+            color={"primary"}
+            onClick={startTimer}
+            size={"large"}
+            style={{ marginRight: "8px" }}
+          >
+            {timerButtonText()}
+          </Button>
+        )}
+        <Button
+          variant={"contained"}
+          color={"primary"}
+          onClick={completeTriviaSession}
+          size={"large"}
+        >
+          Complete Session
+        </Button>
+      </Box>
     );
   }
 
   if (!nextQuestion || !nextCategory) return null;
 
   return (
-    <Box className={classes.container}>
+    <Box className={classes.activeContainer}>
       <AddTeamModal triviaSessionUid={triviaSession.uid} />
       <Box>
         {currentQuestion && (

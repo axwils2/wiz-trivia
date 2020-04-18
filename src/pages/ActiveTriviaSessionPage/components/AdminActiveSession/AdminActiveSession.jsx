@@ -13,6 +13,7 @@ const AdminActiveSession = ({ match }: { match: * }) => {
   const [triviaSession, setTriviaSession] = useState(null);
   const [categories, setCategories] = useState([]);
   const [questions, setQuestions] = useState([]);
+  const [sessionCompleted, setSessionCompleted] = useState(false);
   const triviaSessionUid = match.params.triviaSessionUid;
 
   useEffect(
@@ -49,6 +50,11 @@ const AdminActiveSession = ({ match }: { match: * }) => {
     firestore.triviaSession(triviaSessionUid).update(updates);
   };
 
+  const completeTriviaSession = () => {
+    updateTriviaSession({ status: "complete" });
+    setSessionCompleted(true);
+  };
+
   if (!triviaSession) return null;
   if (triviaSession.status === "disabled") {
     return (
@@ -75,11 +81,12 @@ const AdminActiveSession = ({ match }: { match: * }) => {
       <SessionHeader triviaSession={triviaSession} />
       <SessionTable
         triviaSession={triviaSession}
-        currentQuestion={triviaSession.currentQuestion}
+        sessionCompleted={sessionCompleted}
       />
       <SessionFooter
         triviaSession={triviaSession}
         updateTriviaSession={updateTriviaSession}
+        completeTriviaSession={completeTriviaSession}
         categories={categories}
         questions={questions}
       />

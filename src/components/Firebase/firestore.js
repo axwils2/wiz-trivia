@@ -17,6 +17,11 @@ export const teams = (triviaSessionUid: string) =>
 export const team = (triviaSessionUid: string, uid: string) =>
   teams(triviaSessionUid).doc(uid);
 
+export const pastSessionResults = (triviaSessionUid: string) =>
+  triviaSession(triviaSessionUid).collection("pastResults");
+export const pastSessionResult = (triviaSessionUid: string, uid: string) =>
+  pastSessionResults(triviaSessionUid).doc(uid);
+
 export const questions = (triviaSessionUid: string, categoryUid: string) =>
   category(triviaSessionUid, categoryUid).collection("questions");
 export const question = (

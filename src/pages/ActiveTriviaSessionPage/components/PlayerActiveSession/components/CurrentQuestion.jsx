@@ -33,6 +33,10 @@ const useStyles = makeStyles(theme => ({
     justifyContent: "space-between",
     height: "48px"
   },
+  teamDataContainer: {
+    display: "flex",
+    flexDirection: "column"
+  },
   buttonContainer: {
     position: "fixed",
     bottom: 0,
@@ -97,7 +101,21 @@ const CurrentQuestion = (props: Props) => {
       const newAnswer =
         pastAnswer || defaultAnswer(currentCategory.uid, currentQuestion.uid);
 
-      setAnswer(newAnswer);
+      if (currentQuestion.timerOn) {
+        setAnswer(prevAnswer => {
+          if (
+            prevAnswer.questionUid === newAnswer.questionUid &&
+            prevAnswer.wagerAwardedAmount === newAnswer.wagerAwardedAmount &&
+            prevAnswer.status === newAnswer.status
+          ) {
+            return prevAnswer;
+          } else {
+            return newAnswer;
+          }
+        });
+      } else {
+        setAnswer(newAnswer);
+      }
 
       if (pastAnswer && pastAnswer.status === "refreshed") {
         setSubmitted(false);
@@ -186,13 +204,18 @@ const CurrentQuestion = (props: Props) => {
             Category: {currentCategory.name}
           </Typography>
         </Box>
-        {currentQuestion.timerOn &&
-          !submitted && (
-            <CountdownTimer
-              count={30}
-              onCountdownComplete={() => setSubmitted(true)}
-            />
-          )}
+        <Box className={classes.teamDataContainer}>
+          <Typography variant={"caption"} display={"block"}>
+            Total Points: <b>{team.pointsTotal}</b>
+          </Typography>
+          {currentQuestion.timerOn &&
+            !submitted && (
+              <CountdownTimer
+                count={30}
+                onCountdownComplete={() => setSubmitted(true)}
+              />
+            )}
+        </Box>
       </Box>
       <Typography variant={"overline"} display={"block"}>
         Question:

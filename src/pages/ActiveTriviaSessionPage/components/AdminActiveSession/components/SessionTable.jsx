@@ -25,7 +25,6 @@ import reject from "lodash/reject";
 
 import { firestore } from "components/Firebase";
 import {
-  mapQuerySnapshot,
   mapQuerySnapshotChanges,
   docDataWithId
 } from "functions/firestoreHelpers";
@@ -79,9 +78,11 @@ const useStyles = makeStyles({
 });
 
 const SessionTable = ({
-  triviaSession
+  triviaSession,
+  sessionCompleted
 }: {
-  triviaSession: TriviaSessionType
+  triviaSession: TriviaSessionType,
+  sessionCompleted: boolean
 }) => {
   const [teams, setTeams] = useState([]);
   const [wagerAwardedAmounts, setWagerAwardedAmounts] = useState([]);
@@ -96,7 +97,7 @@ const SessionTable = ({
         .teams(triviaSession.uid)
         .onSnapshot(querySnapshot => {
           const newData = mapQuerySnapshotChanges(querySnapshot);
-          const data = mapQuerySnapshot(querySnapshot);
+
           setTeams(prevTeams => {
             const safeTeams = Array.from(prevTeams);
 
@@ -146,6 +147,18 @@ const SessionTable = ({
       return () => unsubscribe();
     },
     [triviaSession.uid]
+  );
+
+  useEffect(
+    () => {
+      if (teams.length === 0 || !sessionCompleted) return;
+
+      firestore.pastSessionResults(triviaSession.uid).add({
+        createdAt: firestore.timestamp().now(),
+        teams
+      });
+    },
+    [sessionCompleted, teams, triviaSession.uid]
   );
 
   const updateTeamAnswer = (
