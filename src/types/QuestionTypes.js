@@ -27,5 +27,6 @@ export type QuestionType = {
   wagerFormat: QuestionWagerFormatType,
   defaultWager: ?number,
   maxWager: ?number,
-  minWager: ?number
+  minWager: ?number,
+  openResponseListCount: number
 };

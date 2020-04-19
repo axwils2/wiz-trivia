@@ -68,12 +68,11 @@ const QuestionForm = ({
   const [defaultWager, setDefaultWager] = useState(0);
   const [minWager, setMinWager] = useState(undefined);
   const [maxWager, setMaxWager] = useState(undefined);
+  const [openResponseListCount, setOpenResponseListCount] = useState(1);
   const newQuestion = !question;
-  const optionsRequired = [
-    "multipleChoice",
-    "dragDropList",
-    "openResponseList"
-  ].includes(answerFormat);
+  const optionsRequired = ["multipleChoice", "dragDropList"].includes(
+    answerFormat
+  );
 
   useEffect(
     () => {
@@ -88,6 +87,7 @@ const QuestionForm = ({
       setDefaultWager(question.defaultWager);
       setMinWager(question.minWager);
       setMaxWager(question.maxWager);
+      setOpenResponseListCount(question.openResponseListCount || 1);
     },
     [question]
   );
@@ -120,7 +120,8 @@ const QuestionForm = ({
         wagerFormat,
         defaultWager,
         minWager,
-        maxWager
+        maxWager,
+        openResponseListCount
       })
       .then(() => {
         questionRef.get().then(doc => {
@@ -150,6 +151,7 @@ const QuestionForm = ({
         defaultWager,
         minWager,
         maxWager,
+        openResponseListCount,
         categoryUid,
         triviaSessionUid
       })
@@ -175,7 +177,10 @@ const QuestionForm = ({
         maxWager !== null &&
         maxWager !== undefined &&
         minWager >= maxWager) ||
+      defaultWager === null ||
+      defaultWager === undefined ||
       defaultWager < 0 ||
+      !openResponseListCount ||
       (["multipleChoice", "slider"].includes(wagerFormat) &&
         (minWager === null ||
           minWager === undefined ||
@@ -262,6 +267,17 @@ const QuestionForm = ({
               onChange={e => setOptionsString(e.target.value)}
               value={optionsString}
               fullWidth
+            />
+          )}
+          {answerFormat === "openResponseList" && (
+            <TextField
+              id={"openResponseListCount"}
+              label="Number Of Text Fields"
+              variant="outlined"
+              type={"number"}
+              margin={"normal"}
+              onChange={e => setOpenResponseListCount(parseInt(e.target.value))}
+              value={openResponseListCount}
             />
           )}
         </Box>

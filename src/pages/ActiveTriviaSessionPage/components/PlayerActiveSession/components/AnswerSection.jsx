@@ -32,7 +32,8 @@ type AnswerFormProps = {
   answerBody: string,
   updateAnswer: (update: $Shape<TeamAnswerType>) => void,
   questionAnswerFormat: QuestionAnswerFormatType,
-  questionUid: string
+  questionUid: string,
+  openResponseListCount: number
 };
 
 type WagerFormProps = {
@@ -65,9 +66,22 @@ const AnswerForm = ({
   answerBody,
   updateAnswer,
   questionAnswerFormat,
-  questionUid
+  questionUid,
+  openResponseListCount
 }: AnswerFormProps) => {
   const classes = useStyles();
+  const [answerBodyArray, setAnswerBodyArray] = useState(
+    answerBody.split(", ")
+  );
+
+  const onOpenResponseChange = (index, body) => {
+    if (body.includes(",")) return;
+
+    const safeAnswerBodyArray = Array.from(answerBodyArray);
+    safeAnswerBodyArray[index] = body;
+    setAnswerBodyArray(safeAnswerBodyArray);
+    updateAnswer({ body: safeAnswerBodyArray.join(", ") });
+  };
 
   if (questionAnswerFormat === "multipleChoice") {
     return (
@@ -113,6 +127,24 @@ const AnswerForm = ({
           </Box>
         )}
       </Droppable>
+    );
+  } else if (questionAnswerFormat === "openResponseList") {
+    return (
+      <Box>
+        {range(0, openResponseListCount).map(count => (
+          <TextField
+            key={`answer-for-${questionUid}-${count}`}
+            id={`answer-for-${questionUid}`}
+            name={`answer-for-${questionUid}`}
+            label="Answer"
+            variant="outlined"
+            onChange={e => onOpenResponseChange(count, e.target.value)}
+            value={answerBodyArray[count] || ""}
+            margin={"normal"}
+            fullWidth
+          />
+        ))}
+      </Box>
     );
   } else {
     return (
@@ -236,6 +268,7 @@ const AnswerSection = (props: AnswerSectionProps) => {
             updateAnswer={updateAnswer}
             questionAnswerFormat={currentQuestion.answerFormat}
             options={options}
+            openResponseListCount={currentQuestion.openResponseListCount}
             questionUid={currentQuestion.uid}
           />
         </DragDropContext>
