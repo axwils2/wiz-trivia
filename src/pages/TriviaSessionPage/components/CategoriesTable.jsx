@@ -18,7 +18,6 @@ import find from "lodash/find";
 import findIndex from "lodash/findIndex";
 
 import { firestore } from "components/Firebase";
-import { categoryWagerLabel } from "functions/userFriendlyLabels";
 import { mapQuerySnapshot } from "functions/firestoreHelpers";
 import ButtonLink from "components/ButtonLink";
 import * as ROUTES from "constants/routes";
@@ -115,7 +114,6 @@ const CategoriesTable = ({
             <TableRow>
               <TableCell className={classes.orderCell}>Order</TableCell>
               <TableCell>Name</TableCell>
-              <TableCell>Wager Type</TableCell>
               <TableCell />
             </TableRow>
           </TableHead>
@@ -152,7 +150,6 @@ const CategoriesTable = ({
                 <TableCell component="th" scope="row">
                   {category.name}
                 </TableCell>
-                <TableCell>{categoryWagerLabel(category.wagerType)}</TableCell>
                 <TableCell align="right">
                   <ButtonLink
                     to={ROUTES.CATEGORY.linkPath(

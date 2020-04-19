@@ -23,7 +23,7 @@ import ButtonLink from "components/ButtonLink";
 import * as ROUTES from "constants/routes";
 import {
   incorrectAnswerPenaltyLabel,
-  questionFormatLabel
+  questionAnswerFormatLabel
 } from "functions/userFriendlyLabels";
 import NewQuestionModal from "./NewQuestionModal";
 import type { CategoryType } from "types/CategoryTypes";
@@ -125,6 +125,8 @@ const QuestionsTable = ({
         <NewQuestionModal
           newOrderValue={maxOrder() + 1}
           afterQuestionCreate={afterQuestionCreate}
+          categoryUid={category.uid}
+          triviaSessionUid={triviaSessionUid}
         />
       </div>
       <TableContainer component={Paper}>
@@ -175,7 +177,7 @@ const QuestionsTable = ({
                 </TableCell>
                 <TableCell align="right">{question.answer}</TableCell>
                 <TableCell align="right">
-                  {questionFormatLabel(question.format)}
+                  {questionAnswerFormatLabel(question.answerFormat)}
                 </TableCell>
                 <TableCell align="right">
                   {incorrectAnswerPenaltyLabel(question.incorrectAnswerPenalty)}

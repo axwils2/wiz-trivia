@@ -9,10 +9,15 @@ import RadioGroup from "@material-ui/core/RadioGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Slider from "@material-ui/core/Slider";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+import range from "lodash/range";
 
 import type { TeamAnswerType, TeamAnswerStatusType } from "types/TeamTypes";
-import type { QuestionType, QuestionFormatType } from "types/QuestionTypes";
-import type { CategoryType, CategoryWagerType } from "types/CategoryTypes";
+import type {
+  QuestionType,
+  QuestionAnswerFormatType,
+  QuestionWagerFormatType
+} from "types/QuestionTypes";
+import type { CategoryType } from "types/CategoryTypes";
 
 type AnswerSectionProps = {
   answer: TeamAnswerType,
@@ -26,16 +31,19 @@ type AnswerFormProps = {
   options: Array<string>,
   answerBody: string,
   updateAnswer: (update: $Shape<TeamAnswerType>) => void,
-  questionFormat: QuestionFormatType,
+  questionAnswerFormat: QuestionAnswerFormatType,
   questionUid: string
 };
 
 type WagerFormProps = {
   wagerAmount: ?number,
   updateAnswer: (update: $Shape<TeamAnswerType>) => void,
-  wagerType: CategoryWagerType,
+  wagerFormat: QuestionWagerFormatType,
   previousCategoryWagerAmounts: Array<number>,
-  status: TeamAnswerStatusType
+  status: TeamAnswerStatusType,
+  repeatWagersDisabled: boolean,
+  minWager: ?number,
+  maxWager: ?number
 };
 
 const useStyles = makeStyles(theme => ({
@@ -56,12 +64,12 @@ const AnswerForm = ({
   options,
   answerBody,
   updateAnswer,
-  questionFormat,
+  questionAnswerFormat,
   questionUid
 }: AnswerFormProps) => {
   const classes = useStyles();
 
-  if (questionFormat === "multipleChoice") {
+  if (questionAnswerFormat === "multipleChoice") {
     return (
       <RadioGroup
         aria-label="body"
@@ -79,7 +87,7 @@ const AnswerForm = ({
         ))}
       </RadioGroup>
     );
-  } else if (questionFormat === "placeInOrder") {
+  } else if (questionAnswerFormat === "dragDropList") {
     return (
       <Droppable droppableId={"answer"}>
         {provided => (
@@ -125,13 +133,24 @@ const AnswerForm = ({
 const WagerForm = ({
   wagerAmount,
   updateAnswer,
-  wagerType,
+  wagerFormat,
   previousCategoryWagerAmounts,
-  status
+  status,
+  repeatWagersDisabled,
+  minWager,
+  maxWager
 }: WagerFormProps) => {
   const classes = useStyles();
+  const safeRadioMinWager =
+    minWager === null || minWager === undefined ? 1 : minWager;
+  const safeRadioMaxWager =
+    maxWager === null || maxWager === undefined ? 6 : maxWager;
+  const safeSliderMinWager =
+    minWager === null || minWager === undefined ? 0 : minWager;
+  const safeSliderMaxWager =
+    maxWager === null || maxWager === undefined ? 25 : maxWager;
 
-  if (wagerType === "oneThroughSix") {
+  if (wagerFormat === "multipleChoice") {
     return (
       <RadioGroup
         aria-label="wagerAmount"
@@ -140,30 +159,35 @@ const WagerForm = ({
         onChange={e => updateAnswer({ wagerAmount: parseInt(e.target.value) })}
         className={classes.radioGroup}
       >
-        {[1, 2, 3, 4, 5, 6].map(value => (
+        {range(safeRadioMinWager, safeRadioMaxWager + 1).map(value => (
           <FormControlLabel
             key={`radio-wagerAmount-${value}`}
             value={value}
             control={<Radio />}
             label={value}
             disabled={
-              previousCategoryWagerAmounts.includes(value) ||
+              (repeatWagersDisabled &&
+                previousCategoryWagerAmounts.includes(value)) ||
               status === "refreshed"
             }
           />
         ))}
       </RadioGroup>
     );
-  } else if (wagerType === "upToTwentyFive") {
+  } else if (wagerFormat === "slider") {
     return (
       <Box width={"96%"} margin={"24px auto 0"}>
         <Slider
           value={wagerAmount || 0}
           aria-labelledby="discrete-slider-always"
           step={1}
-          max={25}
+          max={safeSliderMaxWager}
+          min={safeSliderMinWager}
           onChange={(_e, value) => updateAnswer({ wagerAmount: value })}
-          marks={[{ value: 0, label: "0" }, { value: 25, label: "25" }]}
+          marks={[
+            { value: safeSliderMinWager, label: safeSliderMinWager },
+            { value: safeSliderMaxWager, label: safeSliderMaxWager }
+          ]}
           valueLabelDisplay="on"
           disabled={status === "refreshed"}
         />
@@ -210,20 +234,23 @@ const AnswerSection = (props: AnswerSectionProps) => {
           <AnswerForm
             answerBody={answer.body || ""}
             updateAnswer={updateAnswer}
-            questionFormat={currentQuestion.format}
+            questionAnswerFormat={currentQuestion.answerFormat}
             options={options}
             questionUid={currentQuestion.uid}
           />
         </DragDropContext>
       </Box>
-      {["oneThroughSix", "upToTwentyFive"].includes(
-        currentCategory.wagerType
-      ) && <Typography variant={"overline"}>Wager Amount:</Typography>}
+      {["multipleChoice", "slider"].includes(currentQuestion.wagerFormat) && (
+        <Typography variant={"overline"}>Wager Amount:</Typography>
+      )}
       <WagerForm
         wagerAmount={answer.wagerAmount}
         updateAnswer={updateAnswer}
-        wagerType={currentCategory.wagerType}
+        wagerFormat={currentQuestion.wagerFormat}
         previousCategoryWagerAmounts={previousCategoryWagerAmounts}
+        repeatWagersDisabled={currentCategory.repeatWagersDisabled}
+        minWager={currentQuestion.minWager}
+        maxWager={currentQuestion.maxWager}
         status={answer.status}
       />
     </Box>

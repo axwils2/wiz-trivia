@@ -119,6 +119,7 @@ const LandingPage = ({ history }: { history: * }) => {
         variant={"contained"}
         onClick={startSession}
         size={"large"}
+        color={"primary"}
         fullWidth
       >
         Play

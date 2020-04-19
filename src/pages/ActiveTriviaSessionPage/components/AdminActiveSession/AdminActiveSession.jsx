@@ -71,7 +71,11 @@ const AdminActiveSession = ({ match }: { match: * }) => {
         <Typography>
           This trivia session is complete! Here are the results:
         </Typography>
-        <SessionTable triviaSession={triviaSession} currentQuestion={null} />
+        <SessionTable
+          triviaSession={triviaSession}
+          currentQuestion={null}
+          sessionCompleted={false}
+        />
       </Box>
     );
   }

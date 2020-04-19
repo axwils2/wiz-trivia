@@ -1,19 +1,4 @@
 // @flow
-export const categoryWagerLabels = [
-  {
-    label: "Wager amount is a sliding scale from 0 to 25",
-    value: "upToTwentyFive"
-  },
-  {
-    label: "Wager amounts are 1-6 (No repeated wagers)",
-    value: "oneThroughSix"
-  },
-  {
-    label: "Wager amounts are blank time of answer",
-    value: "adminChoice"
-  }
-];
-
 export const incorrectAnswerPenaltyLabels = [
   {
     label: "No change in total points",
@@ -25,17 +10,36 @@ export const incorrectAnswerPenaltyLabels = [
   }
 ];
 
-export const questionFormatLabels = [
+export const questionAnswerFormatLabels = [
   {
     label: "Open Response",
     value: "openResponse"
   },
   {
-    label: "Multiple Choice",
-    value: "multipleChoice"
+    label: "Open Response List",
+    value: "openResponseList"
   },
   {
-    label: "Place In Order",
-    value: "placeInOrder"
+    label: "Drag And Drop List",
+    value: "dragDropList"
+  },
+  {
+    label: "Multiple Choice",
+    value: "multipleChoice"
+  }
+];
+
+export const questionWagerFormatLabels = [
+  {
+    label: "Hidden",
+    value: "hidden"
+  },
+  {
+    label: "Slider",
+    value: "slider"
+  },
+  {
+    label: "Multiple Choice",
+    value: "multipleChoice"
   }
 ];

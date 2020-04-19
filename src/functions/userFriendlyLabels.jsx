@@ -1,19 +1,13 @@
 // @flow
 import {
-  categoryWagerLabels,
   incorrectAnswerPenaltyLabels,
-  questionFormatLabels
+  questionAnswerFormatLabels
 } from "constants/userFriendlyLabels";
-import { CategoryWagerType } from "types/CategoryTypes";
-import {
-  QuestionIncorrectAnswerPenaltyType,
-  QuestionFormatType
-} from "types/QuestionTypes";
 
-export const categoryWagerLabel = (categoryWagerType: CategoryWagerType) => {
-  return categoryWagerLabels.find(label => label.value === categoryWagerType)
-    .label;
-};
+import type {
+  QuestionIncorrectAnswerPenaltyType,
+  QuestionAnswerFormatType
+} from "types/QuestionTypes";
 
 export const incorrectAnswerPenaltyLabel = (
   incorrectAnswerPenaltyType: QuestionIncorrectAnswerPenaltyType
@@ -23,7 +17,10 @@ export const incorrectAnswerPenaltyLabel = (
   ).label;
 };
 
-export const questionFormatLabel = (questionFormatType: QuestionFormatType) => {
-  return questionFormatLabels.find(label => label.value === questionFormatType)
-    .label;
+export const questionAnswerFormatLabel = (
+  questionAnswerFormatType: QuestionAnswerFormatType
+) => {
+  return questionAnswerFormatLabels.find(
+    label => label.value === questionAnswerFormatType
+  ).label;
 };

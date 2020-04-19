@@ -5,10 +5,11 @@ import Container from "@material-ui/core/Container";
 import Breadcrumbs from "@material-ui/core/Breadcrumbs";
 import Typography from "@material-ui/core/Typography";
 import NavigateNextIcon from "@material-ui/icons/NavigateNext";
+import noop from "lodash/noop";
 
 import { firestore } from "components/Firebase";
 import { docDataWithId } from "functions/firestoreHelpers";
-import { UpdateQuestionForm } from "./components";
+import QuestionForm from "components/QuestionForm";
 import * as ROUTES from "constants/routes";
 
 const QuestionPage = ({ match }: { match: * }) => {
@@ -47,10 +48,11 @@ const QuestionPage = ({ match }: { match: * }) => {
         </Link>
         <Typography>Question</Typography>
       </Breadcrumbs>
-      <UpdateQuestionForm
+      <QuestionForm
         question={question}
         triviaSessionUid={match.params.triviaSessionUid}
         categoryUid={match.params.categoryUid}
+        afterSubmit={noop}
       />
     </Container>
   );

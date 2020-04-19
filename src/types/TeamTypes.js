@@ -1,4 +1,6 @@
 // @flow
+import type { QuestionWagerFormatType } from "types/QuestionTypes";
+
 export type TeamAnswerStatusType =
   | "draft"
   | "pending"
@@ -12,7 +14,8 @@ export type TeamAnswerType = {
   questionUid: string,
   status: TeamAnswerStatusType,
   wagerAmount: ?number,
-  wagerAwardedAmount: ?number
+  wagerAwardedAmount: ?number,
+  wagerFormat: QuestionWagerFormatType
 };
 
 export type TeamType = {

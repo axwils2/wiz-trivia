@@ -1,12 +1,15 @@
 // @flow
-export type QuestionFormatType =
+export type QuestionAnswerFormatType =
   | "openResponse"
+  | "openResponseList"
   | "multipleChoice"
-  | "placeInOrder";
+  | "dragDropList";
 
 export type QuestionIncorrectAnswerPenaltyType =
   | "zeroPoints"
   | "negativePoints";
+
+export type QuestionWagerFormatType = "slider" | "multipleChoice" | "hidden";
 export type QuestionType = {
   uid: string,
   body: string,
@@ -14,11 +17,15 @@ export type QuestionType = {
   order: number,
   createdAt: Date,
   answer: string,
-  format: QuestionFormatType,
+  answerFormat: QuestionAnswerFormatType,
   incorrectAnswerPenalty: QuestionIncorrectAnswerPenaltyType,
   options: Array<string>,
   timerOn?: boolean,
   timerEnd?: Date,
   categoryUid: string,
-  triviaSessionUid: string
+  triviaSessionUid: string,
+  wagerFormat: QuestionWagerFormatType,
+  defaultWager: ?number,
+  maxWager: ?number,
+  minWager: ?number
 };

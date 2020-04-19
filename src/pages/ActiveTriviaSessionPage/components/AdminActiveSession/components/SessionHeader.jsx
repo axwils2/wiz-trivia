@@ -7,7 +7,7 @@ import Divider from "@material-ui/core/Divider";
 
 import {
   incorrectAnswerPenaltyLabel,
-  questionFormatLabel
+  questionAnswerFormatLabel
 } from "functions/userFriendlyLabels";
 import type { TriviaSessionType } from "types/TriviaSessionTypes";
 import SessionInfoModal from "./SessionInfoModal";
@@ -61,7 +61,7 @@ const SessionHeader = ({
         {incorrectAnswerPenaltyLabel(currentQuestion.incorrectAnswerPenalty)}
       </Typography>
       <Typography variant={"caption"} display={"block"}>
-        Format: {questionFormatLabel(currentQuestion.format)}
+        Format: {questionAnswerFormatLabel(currentQuestion.answerFormat)}
       </Typography>
       <Typography variant={"overline"} display={"block"}>
         Question {currentQuestion.order}:

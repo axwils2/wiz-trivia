@@ -69,14 +69,15 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const defaultAnswer = (categoryUid, questionUid) => {
+const defaultAnswer = (categoryUid, question) => {
   return {
     body: "",
     categoryUid: categoryUid,
-    questionUid: questionUid,
+    questionUid: question.uid,
     status: "draft",
-    wagerAmount: 0,
-    wagerAwardedAmount: null
+    wagerAmount: question.defaultWager || 0,
+    wagerAwardedAmount: null,
+    wagerFormat: question.wagerFormat
   };
 };
 
@@ -84,13 +85,14 @@ const CurrentQuestion = (props: Props) => {
   const { team, triviaSessionUid, currentQuestion, currentCategory } = props;
   const classes = useStyles();
   const [answer, setAnswer] = useState(
-    defaultAnswer(currentCategory.uid, currentQuestion.uid)
+    defaultAnswer(currentCategory.uid, currentQuestion)
   );
   const [submitted, setSubmitted] = useState(false);
   const [backdropOpen, setBackdropOpen] = useState(false);
   const invalid =
     answer.body === "" ||
-    (currentCategory.wagerType === "oneThroughSix" && answer.wagerAmount === 0);
+    (currentQuestion.wagerFormat === "multipleChoice" &&
+      answer.wagerAmount === 0);
 
   useEffect(
     () => {
@@ -99,7 +101,7 @@ const CurrentQuestion = (props: Props) => {
       );
 
       const newAnswer =
-        pastAnswer || defaultAnswer(currentCategory.uid, currentQuestion.uid);
+        pastAnswer || defaultAnswer(currentCategory.uid, currentQuestion);
 
       if (currentQuestion.timerOn) {
         setAnswer(prevAnswer => {
@@ -230,7 +232,12 @@ const CurrentQuestion = (props: Props) => {
         currentQuestion={currentQuestion}
         currentCategory={currentCategory}
         previousCategoryWagerAmounts={map(
-          filter(team.answers, a => a.categoryUid === currentCategory.uid),
+          filter(
+            team.answers,
+            a =>
+              a.categoryUid === currentCategory.uid &&
+              a.wagerFormat === "multipleChoice"
+          ),
           a => a.wagerAmount
         )}
       />

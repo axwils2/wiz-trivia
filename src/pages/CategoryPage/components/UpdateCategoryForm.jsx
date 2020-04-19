@@ -4,14 +4,10 @@ import Button from "@material-ui/core/Button";
 import Box from "@material-ui/core/Box";
 import Typography from "@material-ui/core/Typography";
 import TextField from "@material-ui/core/TextField";
-import Radio from "@material-ui/core/Radio";
-import RadioGroup from "@material-ui/core/RadioGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
-import FormControl from "@material-ui/core/FormControl";
-import FormLabel from "@material-ui/core/FormLabel";
+import Checkbox from "@material-ui/core/Checkbox";
 
 import { firestore } from "components/Firebase";
-import { categoryWagerLabels } from "constants/userFriendlyLabels";
 import type { CategoryType } from "types/CategoryTypes";
 
 const UpdateCategoryForm = ({
@@ -22,13 +18,15 @@ const UpdateCategoryForm = ({
   triviaSessionUid: string
 }) => {
   const [name, setName] = useState(category.name);
-  const [wagerType, setWagerType] = useState(category.wagerType);
-  const invalid = name === "" || !wagerType;
+  const [repeatWagersDisabled, setRepeatWagersDisabled] = useState(
+    category.repeatWagersDisabled
+  );
+  const invalid = name === "";
 
   const updateCategory = () => {
     firestore
       .category(triviaSessionUid, category.uid)
-      .update({ name, wagerType });
+      .update({ name, repeatWagersDisabled });
   };
 
   return (
@@ -44,24 +42,18 @@ const UpdateCategoryForm = ({
         fullWidth
       />
       <Box>
-        <FormControl component="fieldset">
-          <FormLabel component="legend">Wager Type</FormLabel>
-          <RadioGroup
-            aria-label="wager type"
-            name="wagerType"
-            value={wagerType}
-            onChange={e => setWagerType(e.target.value)}
-          >
-            {categoryWagerLabels.map(labelObject => (
-              <FormControlLabel
-                key={labelObject.value}
-                value={labelObject.value}
-                control={<Radio />}
-                label={labelObject.label}
-              />
-            ))}
-          </RadioGroup>
-        </FormControl>
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={repeatWagersDisabled}
+              onChange={() => setRepeatWagersDisabled(prev => !prev)}
+              name="repeatWagersDisabled"
+              color="primary"
+              value={repeatWagersDisabled}
+            />
+          }
+          label="Disable Repeat Wagers Within This Category (Multiple Choice Wager Format Only)"
+        />
       </Box>
       <Button
         disabled={invalid}

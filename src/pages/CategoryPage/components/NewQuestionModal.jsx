@@ -1,12 +1,13 @@
 // @flow
 import React, { useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
+import Container from "@material-ui/core/Container";
 import Button from "@material-ui/core/Button";
 import Modal from "@material-ui/core/Modal";
 import Backdrop from "@material-ui/core/Backdrop";
 import Fade from "@material-ui/core/Fade";
 
-import NewQuestionForm from "./NewQuestionForm";
+import QuestionForm from "components/QuestionForm";
 import type { QuestionType } from "types/QuestionTypes";
 
 const useStyles = makeStyles(theme => ({
@@ -19,16 +20,23 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: theme.palette.background.paper,
     border: "2px solid #000",
     boxShadow: theme.shadows[5],
-    padding: theme.spacing(2, 4, 3)
+    padding: theme.spacing(2, 0),
+    maxHeight: "88vh",
+    width: "800px",
+    overflowY: "scroll"
   }
 }));
 
 const NewQuestionModal = ({
   newOrderValue,
-  afterQuestionCreate
+  afterQuestionCreate,
+  categoryUid,
+  triviaSessionUid
 }: {
   newOrderValue: number,
-  afterQuestionCreate: (question: QuestionType) => void
+  afterQuestionCreate: (question: QuestionType) => void,
+  categoryUid: string,
+  triviaSessionUid: string
 }) => {
   const [open, setOpen] = useState(false);
   const classes = useStyles();
@@ -37,7 +45,7 @@ const NewQuestionModal = ({
   const handleOpen = () => setOpen(true);
 
   const afterCreate = (question: QuestionType) => {
-    if (!question) return null;
+    if (!question) return;
 
     handleClose();
     afterQuestionCreate(question);
@@ -58,10 +66,14 @@ const NewQuestionModal = ({
       >
         <Fade in={open}>
           <div className={classes.paper}>
-            <NewQuestionForm
-              newOrderValue={newOrderValue}
-              afterCreate={afterCreate}
-            />
+            <Container maxWidth={"md"}>
+              <QuestionForm
+                newOrderValue={newOrderValue}
+                afterSubmit={afterCreate}
+                triviaSessionUid={triviaSessionUid}
+                categoryUid={categoryUid}
+              />
+            </Container>
           </div>
         </Fade>
       </Modal>
