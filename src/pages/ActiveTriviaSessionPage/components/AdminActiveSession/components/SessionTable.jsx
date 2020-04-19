@@ -41,7 +41,8 @@ const initialAnswer = {
   wagerAwardedAmount: null,
   categoryUid: "",
   questionUid: "",
-  status: "draft"
+  status: "draft",
+  wagerFormat: "hidden"
 };
 
 const useStyles = makeStyles({

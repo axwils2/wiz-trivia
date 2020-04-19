@@ -6,7 +6,7 @@ export type TriviaSessionStatusType = "active" | "disabled" | "complete";
 
 export type TriviaSessionType = {
   uid: string,
-  accessCode: ?string,
+  accessCode: string,
   currentCategory: ?CategoryType,
   currentQuestion: ?QuestionType,
   name: ?string,
