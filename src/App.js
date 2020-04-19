@@ -6,6 +6,7 @@ import { withAuthentication, AuthUserContext } from "components/Session";
 import { TriviaSessionProvider } from "components/TriviaSessionContext";
 import { TeamProvider } from "components/TeamContext";
 import AppBar from "components/AppBar";
+import { NotificationProvider } from "components/Notification";
 import LandingPage from "pages/LandingPage";
 import TriviaSessionsPage from "pages/TriviaSessionsPage";
 import TriviaSessionPage from "pages/TriviaSessionPage";
@@ -22,26 +23,36 @@ const AuthorizedRoutes = ({ authUser }) => {
   if (!authUser) return null;
 
   return (
-    <Switch>
-      <Route
-        exact
-        path={ROUTES.TRIVIA_SESSIONS}
-        component={TriviaSessionsPage}
-      />
-      <Route
-        exact
-        path={ROUTES.TRIVIA_SESSION.routePath}
-        component={TriviaSessionPage}
-      />
-      <Route exact path={ROUTES.CATEGORY.routePath} component={CategoryPage} />
-      <Route exact path={ROUTES.QUESTION.routePath} component={QuestionPage} />
-      <Route
-        exact
-        path={ROUTES.ACTIVE_TRIVIA_SESSION.routePath}
-        component={ActiveTriviaSessionPage}
-      />
-      <Route path={ROUTES.LANDING} component={TriviaSessionsPage} />
-    </Switch>
+    <NotificationProvider>
+      <Switch>
+        <Route
+          exact
+          path={ROUTES.TRIVIA_SESSIONS}
+          component={TriviaSessionsPage}
+        />
+        <Route
+          exact
+          path={ROUTES.TRIVIA_SESSION.routePath}
+          component={TriviaSessionPage}
+        />
+        <Route
+          exact
+          path={ROUTES.CATEGORY.routePath}
+          component={CategoryPage}
+        />
+        <Route
+          exact
+          path={ROUTES.QUESTION.routePath}
+          component={QuestionPage}
+        />
+        <Route
+          exact
+          path={ROUTES.ACTIVE_TRIVIA_SESSION.routePath}
+          component={ActiveTriviaSessionPage}
+        />
+        <Route path={ROUTES.LANDING} component={TriviaSessionsPage} />
+      </Switch>
+    </NotificationProvider>
   );
 };
 

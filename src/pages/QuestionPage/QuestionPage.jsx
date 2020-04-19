@@ -5,14 +5,15 @@ import Container from "@material-ui/core/Container";
 import Breadcrumbs from "@material-ui/core/Breadcrumbs";
 import Typography from "@material-ui/core/Typography";
 import NavigateNextIcon from "@material-ui/icons/NavigateNext";
-import noop from "lodash/noop";
 
 import { firestore } from "components/Firebase";
 import { docDataWithId } from "functions/firestoreHelpers";
 import QuestionForm from "components/QuestionForm";
 import * as ROUTES from "constants/routes";
+import useNotify from "components/Notification";
 
 const QuestionPage = ({ match }: { match: * }) => {
+  const notify = useNotify();
   const [question, setQuestion] = useState(null);
   const triviaSessionUid = match.params.triviaSessionUid;
   const categoryUid = match.params.categoryUid;
@@ -30,6 +31,10 @@ const QuestionPage = ({ match }: { match: * }) => {
     },
     [triviaSessionUid, categoryUid, questionUid]
   );
+
+  const notifyUser = (question: *) => {
+    notify.success("Question updated successfully!");
+  };
 
   if (!question) return null;
 
@@ -52,7 +57,7 @@ const QuestionPage = ({ match }: { match: * }) => {
         question={question}
         triviaSessionUid={match.params.triviaSessionUid}
         categoryUid={match.params.categoryUid}
-        afterSubmit={noop}
+        afterSubmit={notifyUser}
       />
     </Container>
   );

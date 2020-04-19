@@ -9,6 +9,7 @@ import Checkbox from "@material-ui/core/Checkbox";
 
 import { firestore } from "components/Firebase";
 import type { CategoryType } from "types/CategoryTypes";
+import useNotify from "components/Notification";
 
 const UpdateCategoryForm = ({
   category,
@@ -17,6 +18,7 @@ const UpdateCategoryForm = ({
   category: CategoryType,
   triviaSessionUid: string
 }) => {
+  const notify = useNotify();
   const [name, setName] = useState(category.name);
   const [repeatWagersDisabled, setRepeatWagersDisabled] = useState(
     category.repeatWagersDisabled
@@ -26,7 +28,10 @@ const UpdateCategoryForm = ({
   const updateCategory = () => {
     firestore
       .category(triviaSessionUid, category.uid)
-      .update({ name, repeatWagersDisabled });
+      .update({ name, repeatWagersDisabled })
+      .then(() => {
+        notify.success("Category successfully updated!");
+      });
   };
 
   return (

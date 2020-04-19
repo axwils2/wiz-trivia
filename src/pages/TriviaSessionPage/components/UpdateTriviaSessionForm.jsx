@@ -8,23 +8,28 @@ import toUpper from "lodash/toUpper";
 
 import { firestore } from "components/Firebase";
 import type { TriviaSessionType } from "types/TriviaSessionTypes";
+import useNotify from "components/Notification";
 
 const UpdateTriviaSessionForm = ({
   triviaSession
 }: {
   triviaSession: TriviaSessionType
 }) => {
+  const notify = useNotify();
   const [name, setName] = useState(triviaSession.name);
   const [accessCode, setAccessCode] = useState(triviaSession.accessCode);
   const [waitingMessage, setWaitingMessage] = useState(
-    triviaSession.waitingMessage
+    triviaSession.waitingMessage || ""
   );
   const invalid = name === "" || accessCode === "";
 
   const updateTriviaSession = () => {
     firestore
       .triviaSession(triviaSession.uid)
-      .update({ name, accessCode, waitingMessage });
+      .update({ name, accessCode, waitingMessage })
+      .then(() => {
+        notify.success("Session successfully updated!");
+      });
   };
 
   return (
