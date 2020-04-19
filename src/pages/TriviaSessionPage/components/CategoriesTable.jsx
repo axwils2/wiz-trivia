@@ -114,6 +114,7 @@ const CategoriesTable = ({
             <TableRow>
               <TableCell className={classes.orderCell}>Order</TableCell>
               <TableCell>Name</TableCell>
+              <TableCell>Repeat Wagers Disabled</TableCell>
               <TableCell />
             </TableRow>
           </TableHead>
@@ -149,6 +150,9 @@ const CategoriesTable = ({
                 </TableCell>
                 <TableCell component="th" scope="row">
                   {category.name}
+                </TableCell>
+                <TableCell>
+                  {category.repeatWagersDisabled ? "True" : "False"}
                 </TableCell>
                 <TableCell align="right">
                   <ButtonLink

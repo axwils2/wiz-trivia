@@ -23,7 +23,8 @@ import ButtonLink from "components/ButtonLink";
 import * as ROUTES from "constants/routes";
 import {
   incorrectAnswerPenaltyLabel,
-  questionAnswerFormatLabel
+  questionAnswerFormatLabel,
+  questionWagerFormatLabel
 } from "functions/userFriendlyLabels";
 import NewQuestionModal from "./NewQuestionModal";
 import type { CategoryType } from "types/CategoryTypes";
@@ -135,10 +136,12 @@ const QuestionsTable = ({
             <TableRow>
               <TableCell className={classes.orderCell}>Order</TableCell>
               <TableCell>Body</TableCell>
-              <TableCell align="right">Answer</TableCell>
               <TableCell align="right">Format</TableCell>
-              <TableCell align="right">Incorrect Answer Penalty</TableCell>
-              <TableCell align="right">Options</TableCell>
+              <TableCell align="right">Incorrect Penalty</TableCell>
+              <TableCell align="right">Wager Format</TableCell>
+              <TableCell align="right">Default Wager</TableCell>
+              <TableCell align="right">Min Wager</TableCell>
+              <TableCell align="right">Max Wager</TableCell>
               <TableCell />
             </TableRow>
           </TableHead>
@@ -175,7 +178,6 @@ const QuestionsTable = ({
                 <TableCell component="th" scope="row">
                   {question.body}
                 </TableCell>
-                <TableCell align="right">{question.answer}</TableCell>
                 <TableCell align="right">
                   {questionAnswerFormatLabel(question.answerFormat)}
                 </TableCell>
@@ -183,8 +185,11 @@ const QuestionsTable = ({
                   {incorrectAnswerPenaltyLabel(question.incorrectAnswerPenalty)}
                 </TableCell>
                 <TableCell align="right">
-                  {question.options.join(", ")}
+                  {questionWagerFormatLabel(question.wagerFormat)}
                 </TableCell>
+                <TableCell align="right">{question.defaultWager}</TableCell>
+                <TableCell align="right">{question.minWager}</TableCell>
+                <TableCell align="right">{question.maxWager}</TableCell>
                 <TableCell align="right">
                   <ButtonLink
                     to={ROUTES.QUESTION.linkPath(

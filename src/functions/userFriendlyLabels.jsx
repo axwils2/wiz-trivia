@@ -1,12 +1,14 @@
 // @flow
 import {
   incorrectAnswerPenaltyLabels,
-  questionAnswerFormatLabels
+  questionAnswerFormatLabels,
+  questionWagerFormatLabels
 } from "constants/userFriendlyLabels";
 
 import type {
   QuestionIncorrectAnswerPenaltyType,
-  QuestionAnswerFormatType
+  QuestionAnswerFormatType,
+  QuestionWagerFormatType
 } from "types/QuestionTypes";
 
 export const incorrectAnswerPenaltyLabel = (
@@ -22,5 +24,13 @@ export const questionAnswerFormatLabel = (
 ) => {
   return questionAnswerFormatLabels.find(
     label => label.value === questionAnswerFormatType
+  ).label;
+};
+
+export const questionWagerFormatLabel = (
+  questionWagerFormatType: QuestionWagerFormatType
+) => {
+  return questionWagerFormatLabels.find(
+    label => label.value === questionWagerFormatType
   ).label;
 };
