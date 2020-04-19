@@ -14,23 +14,29 @@ import type {
 export const incorrectAnswerPenaltyLabel = (
   incorrectAnswerPenaltyType: QuestionIncorrectAnswerPenaltyType
 ) => {
-  return incorrectAnswerPenaltyLabels.find(
+  const object = incorrectAnswerPenaltyLabels.find(
     label => label.value === incorrectAnswerPenaltyType
-  ).label;
+  );
+
+  return object ? object.label : "";
 };
 
 export const questionAnswerFormatLabel = (
   questionAnswerFormatType: QuestionAnswerFormatType
 ) => {
-  return questionAnswerFormatLabels.find(
+  const object = questionAnswerFormatLabels.find(
     label => label.value === questionAnswerFormatType
-  ).label;
+  );
+
+  return object ? object.label : "";
 };
 
 export const questionWagerFormatLabel = (
   questionWagerFormatType: QuestionWagerFormatType
 ) => {
-  return questionWagerFormatLabels.find(
+  const object = questionWagerFormatLabels.find(
     label => label.value === questionWagerFormatType
-  ).label;
+  );
+
+  return object ? object.label : "";
 };
