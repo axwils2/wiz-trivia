@@ -59,7 +59,11 @@ const AppBar = () => {
             )}
             <div className={classes.logoTitleContainer}>
               <Link to={ROUTES.LANDING} className={classes.link}>
-                <img src={"logo192.png"} className={classes.logo} />
+                <img
+                  src={"logo192.png"}
+                  className={classes.logo}
+                  alt={"Trivia Wiz"}
+                />
                 <Typography variant={"h6"}>Trivia Wiz</Typography>
               </Link>
             </div>
