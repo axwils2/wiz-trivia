@@ -19,22 +19,28 @@ const useStyles = makeStyles(theme => ({
   root: {
     flexGrow: 1
   },
-  menuButton: {
-    marginRight: theme.spacing(2)
-  },
-  title: {
-    flexGrow: 1
+  logoTitleContainer: {
+    flexGrow: 1,
+    display: "flex",
+    justifyContent: props => (props.authUser ? "left" : "center")
   },
   link: {
     textDecoration: "none",
-    color: "inherit"
+    color: "inherit",
+    display: "flex",
+    alignItems: "center"
+  },
+  logo: {
+    width: "32px",
+    height: "32px",
+    marginRight: theme.spacing(1)
   }
 }));
 
 const AppBar = () => {
   const [open, setOpen] = useState(false);
   const authUser = useContext(AuthUserContext);
-  const classes = useStyles();
+  const classes = useStyles({ authUser: authUser });
 
   return (
     <div className={"root"}>
@@ -44,7 +50,6 @@ const AppBar = () => {
             {authUser && (
               <IconButton
                 edge={"start"}
-                className={classes.menuButton}
                 color={"inherit"}
                 aria-label={"menu"}
                 onClick={() => setOpen(true)}
@@ -52,16 +57,12 @@ const AppBar = () => {
                 <MenuIcon />
               </IconButton>
             )}
-
-            <Typography
-              variant={"h6"}
-              className={classes.title}
-              align={authUser ? "left" : "center"}
-            >
+            <div className={classes.logoTitleContainer}>
               <Link to={ROUTES.LANDING} className={classes.link}>
-                Trivia Wiz
+                <img src={"logo192.png"} className={classes.logo} />
+                <Typography variant={"h6"}>Trivia Wiz</Typography>
               </Link>
-            </Typography>
+            </div>
             {authUser && (
               <Button color={"inherit"} onClick={doSignOut}>
                 Logout
