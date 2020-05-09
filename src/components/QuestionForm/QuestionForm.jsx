@@ -21,6 +21,7 @@ import {
 } from "constants/userFriendlyLabels";
 import { docDataWithId } from "functions/firestoreHelpers";
 import type { QuestionType } from "types/QuestionTypes";
+import GiphySearch from "components/GiphySearch";
 
 const useStyles = makeStyles({
   flexSection: {
@@ -337,6 +338,16 @@ const QuestionForm = ({
               value={maxWager}
             />
           </Box>
+        </Box>
+      </Box>
+      <Divider className={classes.divider} />
+      <Box className={classes.flexSection}>
+        <Box className={classes.flexSectionHalf}>
+          <FormLabel component="legend">Correct Gif</FormLabel>
+          <GiphySearch />
+        </Box>
+        <Box className={classes.flexSectionHalf}>
+          <FormLabel component="legend">Incorrect Gif</FormLabel>
         </Box>
       </Box>
       <Button
