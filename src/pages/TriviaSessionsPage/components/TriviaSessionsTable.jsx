@@ -30,11 +30,16 @@ const useStyles = makeStyles({
   }
 });
 
-const TriviaSessionsTable = ({ history }: { history: * }) => {
+const TriviaSessionsTable = ({
+  history,
+  archived
+}: {
+  history: *,
+  archived: boolean
+}) => {
   const classes = useStyles();
   const authUser = useContext(AuthUserContext);
   const [sessions, setSessions] = useState([]);
-  const [archived, setArchived] = useState(false);
 
   useEffect(
     () => {
