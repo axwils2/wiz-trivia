@@ -80,9 +80,11 @@ const useStyles = makeStyles({
 
 const SessionTable = ({
   triviaSession,
+  updateTriviaSession,
   sessionCompleted
 }: {
   triviaSession: TriviaSessionType,
+  updateTriviaSession: (updates: $Shape<TriviaSessionType>) => void,
   sessionCompleted: boolean
 }) => {
   const [teams, setTeams] = useState([]);
@@ -152,14 +154,24 @@ const SessionTable = ({
 
   useEffect(
     () => {
-      if (teams.length === 0 || !sessionCompleted) return;
+      if (teams.length === 0) return;
+
+      updateTriviaSession({
+        leaderBoard: orderBy(teams, ["pointsTotal"], ["desc"]).map(team => ({
+          name: team.name,
+          pointsTotal: team.pointsTotal
+        }))
+      });
+      console.log("update sent");
+
+      if (!sessionCompleted) return;
 
       firestore.pastSessionResults(triviaSession.uid).add({
         createdAt: firestore.timestamp().now(),
         teams
       });
     },
-    [sessionCompleted, teams, triviaSession.uid]
+    [sessionCompleted, teams, triviaSession.uid, updateTriviaSession]
   );
 
   const updateTeamAnswer = (

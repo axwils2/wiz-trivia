@@ -73,6 +73,7 @@ const AdminActiveSession = ({ match }: { match: * }) => {
         </Typography>
         <SessionTable
           triviaSession={triviaSession}
+          updateTriviaSession={updateTriviaSession}
           currentQuestion={null}
           sessionCompleted={false}
         />
@@ -86,6 +87,7 @@ const AdminActiveSession = ({ match }: { match: * }) => {
       <SessionTable
         triviaSession={triviaSession}
         sessionCompleted={sessionCompleted}
+        updateTriviaSession={updateTriviaSession}
       />
       <SessionFooter
         triviaSession={triviaSession}

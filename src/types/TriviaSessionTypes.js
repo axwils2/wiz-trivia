@@ -13,5 +13,6 @@ export type TriviaSessionType = {
   status: TriviaSessionStatusType,
   userUid: string,
   waitingMessage: ?string,
-  leaderBoardVisible: boolean
+  leaderBoardVisible: boolean,
+  leaderBoard: Array<{ name: string, pointsTotal: number }>
 };
