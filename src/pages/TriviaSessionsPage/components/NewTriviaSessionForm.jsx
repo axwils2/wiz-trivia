@@ -34,7 +34,8 @@ const NewTriviaSessionForm = ({ history }: { history: * }) => {
         userUid: authUser.uid,
         createdAt: firestore.timestamp().now(),
         leaderBoardVisible,
-        leaderBoard: []
+        leaderBoard: [],
+        archived: false
       })
       .then(docRef => {
         history.push(ROUTES.TRIVIA_SESSION.linkPath(docRef.id));

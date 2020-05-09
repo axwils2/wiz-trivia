@@ -16,5 +16,6 @@ export type TriviaSessionType = {
   userUid: string,
   waitingMessage: ?string,
   leaderBoardVisible: boolean,
-  leaderBoard: LeaderBoardType
+  leaderBoard: LeaderBoardType,
+  archived: boolean
 };

@@ -10,7 +10,11 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
 import Button from "@material-ui/core/Button";
+import IconButton from "@material-ui/core/IconButton";
+import ArchiveIcon from "@material-ui/icons/Archive";
+import Tooltip from "@material-ui/core/Tooltip";
 import findIndex from "lodash/findIndex";
+import reject from "lodash/reject";
 
 import { firestore } from "components/Firebase";
 import type { TriviaSessionStatusType } from "types/TriviaSessionTypes";
@@ -21,7 +25,7 @@ import * as ROUTES from "constants/routes";
 
 const useStyles = makeStyles({
   smallCell: {
-    width: "100px",
+    width: "70px",
     paddingLeft: 0
   }
 });
@@ -58,6 +62,15 @@ const TriviaSessionsTable = ({ history }: { history: * }) => {
       .update({ status: "active" })
       .then(() => {
         history.push(ROUTES.ACTIVE_TRIVIA_SESSION.linkPath(uid));
+      });
+  };
+
+  const archiveSession = (uid: string) => {
+    firestore
+      .triviaSession(uid)
+      .update({ archived: true })
+      .then(() => {
+        setSessions(reject(sessions, session => session.uid === uid));
       });
   };
 
@@ -102,6 +115,7 @@ const TriviaSessionsTable = ({ history }: { history: * }) => {
             <TableCell align="right">Status</TableCell>
             <TableCell align="right" className={classes.smallCell} />
             <TableCell align="right" className={classes.smallCell} />
+            <TableCell align="right" className={classes.smallCell} />
           </TableRow>
         </TableHead>
         <TableBody>
@@ -131,6 +145,16 @@ const TriviaSessionsTable = ({ history }: { history: * }) => {
                 >
                   Edit
                 </ButtonLink>
+              </TableCell>
+              <TableCell align="right" className={classes.smallCell}>
+                <Tooltip title={"Archive Session"}>
+                  <IconButton
+                    onClick={() => archiveSession(session.uid)}
+                    size={"small"}
+                  >
+                    <ArchiveIcon />
+                  </IconButton>
+                </Tooltip>
               </TableCell>
             </TableRow>
           ))}
