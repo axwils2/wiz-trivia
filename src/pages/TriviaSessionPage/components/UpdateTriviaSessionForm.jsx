@@ -4,6 +4,8 @@ import Button from "@material-ui/core/Button";
 import Box from "@material-ui/core/Box";
 import Typography from "@material-ui/core/Typography";
 import TextField from "@material-ui/core/TextField";
+import Radio from "@material-ui/core/Radio";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
 import toUpper from "lodash/toUpper";
 
 import { firestore } from "components/Firebase";
@@ -20,6 +22,9 @@ const UpdateTriviaSessionForm = ({
   const [accessCode, setAccessCode] = useState(triviaSession.accessCode);
   const [waitingMessage, setWaitingMessage] = useState(
     triviaSession.waitingMessage || ""
+  );
+  const [leaderBoardVisible, setLeaderBoardVisible] = useState(
+    triviaSession.leaderBoardVisible || false
   );
   const invalid = name === "" || accessCode === "";
 
@@ -62,6 +67,17 @@ const UpdateTriviaSessionForm = ({
         defaultValue={waitingMessage}
         fullWidth
       />
+      <Box>
+        <FormControlLabel
+          value={leaderBoardVisible}
+          control={<Radio />}
+          label={
+            "Do you want teams to be able to access a leader board during the session?"
+          }
+          checked={leaderBoardVisible}
+          onChange={() => setLeaderBoardVisible(!leaderBoardVisible)}
+        />
+      </Box>
       <Button
         disabled={invalid}
         variant={"contained"}

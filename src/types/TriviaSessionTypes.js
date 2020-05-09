@@ -12,5 +12,6 @@ export type TriviaSessionType = {
   name: ?string,
   status: TriviaSessionStatusType,
   userUid: string,
-  waitingMessage: ?string
+  waitingMessage: ?string,
+  leaderBoardVisible: boolean
 };
