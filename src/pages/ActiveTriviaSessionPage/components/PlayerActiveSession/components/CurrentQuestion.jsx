@@ -55,7 +55,8 @@ const useStyles = makeStyles(theme => ({
   },
   backdrop: {
     zIndex: theme.zIndex.drawer + 1,
-    padding: "24px"
+    padding: "24px",
+    flexDirection: "column"
   },
   pendingBackdrop: {
     backgroundColor: "rgba(0, 0, 0, .9)"
@@ -70,7 +71,11 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: "rgba(191, 36, 36, .9)"
   },
   backdropText: {
-    color: "#fff"
+    color: "#fff",
+    marginBottom: "16px"
+  },
+  backdropGif: {
+    maxWidth: "100%"
   }
 }));
 
@@ -194,6 +199,15 @@ const CurrentQuestion = (props: Props) => {
     }
   };
 
+  const backdropGif = () => {
+    if (!currentQuestion) return;
+
+    const gifUrl = currentQuestion[`${answer.status}GifUrl`];
+    if (!gifUrl) return;
+
+    return <img src={gifUrl} className={classes.backdropGif} />;
+  };
+
   return (
     <Box className={classes.pageContainer}>
       <Backdrop
@@ -208,6 +222,7 @@ const CurrentQuestion = (props: Props) => {
         >
           {backdropText()}
         </Typography>
+        {backdropGif()}
       </Backdrop>
       <Box className={classes.questionDataContainer}>
         <Box>

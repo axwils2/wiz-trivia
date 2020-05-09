@@ -28,5 +28,7 @@ export type QuestionType = {
   defaultWager: ?number,
   maxWager: ?number,
   minWager: ?number,
-  openResponseListCount: number
+  openResponseListCount: number,
+  correctGifUrl: ?string,
+  incorrectGifUrl: ?string
 };

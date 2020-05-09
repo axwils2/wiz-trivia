@@ -69,6 +69,7 @@ const QuestionForm = ({
   const [defaultWager, setDefaultWager] = useState(0);
   const [minWager, setMinWager] = useState(undefined);
   const [maxWager, setMaxWager] = useState(undefined);
+  const [correctGifUrl, setCorrectGifUrl] = useState(null);
   const [openResponseListCount, setOpenResponseListCount] = useState(1);
   const newQuestion = !question;
   const optionsRequired = ["multipleChoice", "dragDropList"].includes(
@@ -88,6 +89,7 @@ const QuestionForm = ({
       setDefaultWager(question.defaultWager);
       setMinWager(question.minWager);
       setMaxWager(question.maxWager);
+      setCorrectGifUrl(question.correctGifUrl);
       setOpenResponseListCount(question.openResponseListCount || 1);
     },
     [question]
@@ -122,6 +124,7 @@ const QuestionForm = ({
         defaultWager,
         minWager,
         maxWager,
+        correctGifUrl,
         openResponseListCount
       })
       .then(() => {
@@ -152,6 +155,7 @@ const QuestionForm = ({
         defaultWager,
         minWager,
         maxWager,
+        correctGifUrl,
         openResponseListCount,
         categoryUid,
         triviaSessionUid
@@ -343,11 +347,11 @@ const QuestionForm = ({
       <Divider className={classes.divider} />
       <Box className={classes.flexSection}>
         <Box className={classes.flexSectionHalf}>
-          <FormLabel component="legend">Correct Gif</FormLabel>
-          <GiphySearch />
+          <FormLabel component="legend">Correct GIF</FormLabel>
+          <GiphySearch onGifSelect={gif => setCorrectGifUrl(gif.url)} />
         </Box>
         <Box className={classes.flexSectionHalf}>
-          <FormLabel component="legend">Incorrect Gif</FormLabel>
+          <FormLabel component="legend">Incorrect GIF</FormLabel>
         </Box>
       </Box>
       <Button
