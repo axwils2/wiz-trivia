@@ -276,6 +276,7 @@ const CurrentQuestion = (props: Props) => {
         </Button>
       </Box>
       <LeaderBoardSideDrawer
+        teamName={team.name}
         open={leaderBoardOpen}
         onClose={() => setLeaderBoardOpen(false)}
         leaderBoard={leaderBoard}

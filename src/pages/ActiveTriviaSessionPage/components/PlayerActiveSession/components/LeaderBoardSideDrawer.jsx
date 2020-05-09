@@ -16,17 +16,22 @@ const useStyles = makeStyles({
     flexGrow: 0,
     marginRight: "8px",
     marginLeft: "8px"
+  },
+  highlight: {
+    backgroundColor: "#d8d8d8"
   }
 });
 
 const LeaderBoardSideDrawer = ({
   open,
   onClose,
-  leaderBoard
+  leaderBoard,
+  teamName
 }: {
   open: boolean,
   onClose: () => void,
-  leaderBoard: LeaderBoardType
+  leaderBoard: LeaderBoardType,
+  teamName: string
 }) => {
   const classes = useStyles();
 
@@ -38,7 +43,11 @@ const LeaderBoardSideDrawer = ({
             <ListItemText primary={"Leader Board"} />
           </ListItem>
           {leaderBoard.map(({ name, pointsTotal }, index) => (
-            <ListItem divider key={name}>
+            <ListItem
+              divider
+              key={name}
+              className={teamName === name && classes.highlight}
+            >
               <ListItemText
                 primary={`${index + 1}.`}
                 className={classes.noGrow}
