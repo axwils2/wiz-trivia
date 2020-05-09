@@ -159,7 +159,6 @@ const SessionTable = ({
     () => {
       if (teams.length === 0) return;
 
-      console.log("setLeaderBoard");
       setLeaderBoard(
         orderBy(teams, ["pointsTotal"], ["desc"]).map(team => ({
           name: team.name,

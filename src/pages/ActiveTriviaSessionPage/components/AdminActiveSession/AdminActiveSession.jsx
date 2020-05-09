@@ -42,7 +42,6 @@ const AdminActiveSession = ({ match }: { match: * }) => {
         .onSnapshot(doc => {
           const data = docDataWithId(doc);
           setTriviaSession(data);
-          console.log("subscription setLeaderBoard");
           setLeaderBoard(data.leaderBoard);
         });
       return () => unsubscribe();

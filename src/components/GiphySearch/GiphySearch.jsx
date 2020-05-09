@@ -3,6 +3,8 @@ import React, { useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
+import IconButton from "@material-ui/core/IconButton";
+import DeleteIcon from "@material-ui/icons/Delete";
 import Box from "@material-ui/core/Box";
 import SearchIcon from "@material-ui/icons/Search";
 import { Carousel } from "@giphy/react-components";
@@ -17,10 +19,31 @@ const useStyles = makeStyles({
   },
   searchButton: {
     margin: "16px 0 8px 8px"
+  },
+  gifImage: {
+    height: "270px",
+    marginTop: "16px",
+    maxWidth: "100%"
+  },
+  selectedContainer: {
+    position: "relative"
+  },
+  clearGifIcon: {
+    position: "absolute",
+    top: 16,
+    left: 0
   }
 });
 
-const GiphySearch = ({ onGifSelect }: { onGifSelect: (*) => void }) => {
+const GiphySearch = ({
+  onGifSelect,
+  gifUrl,
+  id
+}: {
+  onGifSelect: (*) => void,
+  gifUrl: ?string,
+  id: string
+}) => {
   const classes = useStyles();
   const [search, setSearch] = useState("");
   const [visible, setVisible] = useState(false);
@@ -33,6 +56,11 @@ const GiphySearch = ({ onGifSelect }: { onGifSelect: (*) => void }) => {
     });
   };
 
+  const clearGif = (e: *) => {
+    e.preventDefault();
+    onGifSelect(null);
+  };
+
   const newSearch = () => {
     hideCarousel();
     showCarousel();
@@ -43,14 +71,12 @@ const GiphySearch = ({ onGifSelect }: { onGifSelect: (*) => void }) => {
   };
 
   const showCarousel = debounce(() => {
-    console.log("got here");
     return setVisible(true);
   }, 100);
 
   const onGifClick = (gif: *, e) => {
     e.preventDefault();
-    console.log(gif);
-    onGifSelect(gif);
+    onGifSelect(gif.images.downsized.url);
   };
 
   const renderCarousel = () => {
@@ -68,11 +94,24 @@ const GiphySearch = ({ onGifSelect }: { onGifSelect: (*) => void }) => {
     return <Box style={{ height: "206px", width: "100%" }} />;
   };
 
-  return (
-    <Box>
+  const selected = () => (
+    <Box className={classes.selectedContainer}>
+      <img src={gifUrl} className={classes.gifImage} />
+      <IconButton
+        onClick={clearGif}
+        className={classes.clearGifIcon}
+        color={"secondary"}
+      >
+        <DeleteIcon />
+      </IconButton>
+    </Box>
+  );
+
+  const renderSearch = () => (
+    <>
       <Box className={classes.searchContainer}>
         <TextField
-          id={"giphySearch"}
+          id={id}
           placeholder={"Search GIFs..."}
           variant="outlined"
           margin={"normal"}
@@ -91,8 +130,10 @@ const GiphySearch = ({ onGifSelect }: { onGifSelect: (*) => void }) => {
         </Button>
       </Box>
       {renderCarousel()}
-    </Box>
+    </>
   );
+
+  return <Box>{gifUrl ? selected() : renderSearch()}</Box>;
 };
 
 export default GiphySearch;
