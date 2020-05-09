@@ -7,6 +7,7 @@ import TextField from "@material-ui/core/TextField";
 import Radio from "@material-ui/core/Radio";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import toUpper from "lodash/toUpper";
+import trim from "lodash/trim";
 
 import { firestore } from "components/Firebase";
 import type { TriviaSessionType } from "types/TriviaSessionTypes";
@@ -31,7 +32,12 @@ const UpdateTriviaSessionForm = ({
   const updateTriviaSession = () => {
     firestore
       .triviaSession(triviaSession.uid)
-      .update({ name, accessCode, waitingMessage, leaderBoardVisible })
+      .update({
+        name,
+        accessCode: trim(accessCode),
+        waitingMessage,
+        leaderBoardVisible
+      })
       .then(() => {
         notify.success("Session successfully updated!");
       });

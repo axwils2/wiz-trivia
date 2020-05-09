@@ -9,6 +9,7 @@ import Radio from "@material-ui/core/Radio";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import toUpper from "lodash/toUpper";
 import toLower from "lodash/toLower";
+import trim from "lodash/trim";
 
 import { AuthUserContext } from "components/Session";
 import { firestore } from "components/Firebase";
@@ -26,7 +27,7 @@ const NewTriviaSessionForm = ({ history }: { history: * }) => {
     firestore
       .triviaSessions()
       .add({
-        accessCode,
+        accessCode: trim(accessCode),
         name,
         nameInsensitive: toLower(name),
         status: "disabled",
