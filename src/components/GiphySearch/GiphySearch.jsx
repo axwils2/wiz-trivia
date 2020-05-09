@@ -96,7 +96,7 @@ const GiphySearch = ({
 
   const selected = () => (
     <Box className={classes.selectedContainer}>
-      <img src={gifUrl} className={classes.gifImage} />
+      <img src={gifUrl} className={classes.gifImage} alt={"gif"} />
       <IconButton
         onClick={clearGif}
         className={classes.clearGifIcon}
