@@ -34,12 +34,14 @@ const TriviaSessionsTable = ({ history }: { history: * }) => {
   const classes = useStyles();
   const authUser = useContext(AuthUserContext);
   const [sessions, setSessions] = useState([]);
+  const [archived, setArchived] = useState(false);
 
   useEffect(
     () => {
       firestore
         .triviaSessions()
         .where("userUid", "==", authUser.uid)
+        .where("archived", "==", archived)
         .orderBy("createdAt", "desc")
         .limit(10)
         .get()
@@ -48,7 +50,7 @@ const TriviaSessionsTable = ({ history }: { history: * }) => {
           setSessions(data);
         });
     },
-    [authUser.uid]
+    [authUser.uid, archived]
   );
 
   const onButtonClick = (uid: string, status: TriviaSessionStatusType) => {
