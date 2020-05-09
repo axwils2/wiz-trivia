@@ -13,6 +13,7 @@ const AdminActiveSession = ({ match }: { match: * }) => {
   const [triviaSession, setTriviaSession] = useState(null);
   const [categories, setCategories] = useState([]);
   const [questions, setQuestions] = useState([]);
+  const [leaderBoard, setLeaderBoard] = useState([]);
   const [sessionCompleted, setSessionCompleted] = useState(false);
   const triviaSessionUid = match.params.triviaSessionUid;
 
@@ -39,7 +40,10 @@ const AdminActiveSession = ({ match }: { match: * }) => {
       const unsubscribe = firestore
         .triviaSession(triviaSessionUid)
         .onSnapshot(doc => {
-          setTriviaSession(docDataWithId(doc));
+          const data = docDataWithId(doc);
+          setTriviaSession(data);
+          console.log("subscription setLeaderBoard");
+          setLeaderBoard(data.leaderBoard);
         });
       return () => unsubscribe();
     },
@@ -51,7 +55,7 @@ const AdminActiveSession = ({ match }: { match: * }) => {
   };
 
   const completeTriviaSession = () => {
-    updateTriviaSession({ status: "complete" });
+    updateTriviaSession({ status: "complete", leaderBoard });
     setSessionCompleted(true);
   };
 
@@ -73,7 +77,7 @@ const AdminActiveSession = ({ match }: { match: * }) => {
         </Typography>
         <SessionTable
           triviaSession={triviaSession}
-          updateTriviaSession={updateTriviaSession}
+          setLeaderBoard={setLeaderBoard}
           currentQuestion={null}
           sessionCompleted={false}
         />
@@ -87,11 +91,12 @@ const AdminActiveSession = ({ match }: { match: * }) => {
       <SessionTable
         triviaSession={triviaSession}
         sessionCompleted={sessionCompleted}
-        updateTriviaSession={updateTriviaSession}
+        setLeaderBoard={setLeaderBoard}
       />
       <SessionFooter
         triviaSession={triviaSession}
         updateTriviaSession={updateTriviaSession}
+        leaderBoard={leaderBoard}
         completeTriviaSession={completeTriviaSession}
         categories={categories}
         questions={questions}

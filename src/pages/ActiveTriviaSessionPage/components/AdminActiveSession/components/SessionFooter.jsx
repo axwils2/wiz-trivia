@@ -9,12 +9,16 @@ import find from "lodash/find";
 
 import CountdownTimer from "components/CountdownTimer";
 import AddTeamModal from "./AddTeamModal";
-import type { TriviaSessionType } from "types/TriviaSessionTypes";
+import type {
+  TriviaSessionType,
+  LeaderBoardType
+} from "types/TriviaSessionTypes";
 import type { CategoryType } from "types/CategoryTypes";
 import type { QuestionType } from "types/QuestionTypes";
 
 type Props = {
   triviaSession: TriviaSessionType,
+  leaderBoard: LeaderBoardType,
   updateTriviaSession: (updates: $Shape<TriviaSessionType>) => void,
   completeTriviaSession: () => void,
   categories: Array<CategoryType>,
@@ -38,6 +42,7 @@ const SessionFooter = (props: Props) => {
   const classes = useStyles();
   const {
     triviaSession,
+    leaderBoard,
     updateTriviaSession,
     completeTriviaSession,
     categories,
@@ -175,7 +180,8 @@ const SessionFooter = (props: Props) => {
           onClick={() =>
             updateTriviaSession({
               currentQuestion: nextQuestion,
-              currentCategory: nextCategory
+              currentCategory: nextCategory,
+              leaderBoard
             })
           }
           size={"large"}

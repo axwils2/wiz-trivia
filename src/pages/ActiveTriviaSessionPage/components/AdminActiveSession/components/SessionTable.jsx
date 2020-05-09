@@ -28,7 +28,10 @@ import {
   mapQuerySnapshotChanges,
   docDataWithId
 } from "functions/firestoreHelpers";
-import type { TriviaSessionType } from "types/TriviaSessionTypes";
+import type {
+  TriviaSessionType,
+  LeaderBoardType
+} from "types/TriviaSessionTypes";
 import type {
   TeamType,
   TeamAnswerType,
@@ -80,11 +83,11 @@ const useStyles = makeStyles({
 
 const SessionTable = ({
   triviaSession,
-  updateTriviaSession,
+  setLeaderBoard,
   sessionCompleted
 }: {
   triviaSession: TriviaSessionType,
-  updateTriviaSession: (updates: $Shape<TriviaSessionType>) => void,
+  setLeaderBoard: (leaderBoard: LeaderBoardType) => void,
   sessionCompleted: boolean
 }) => {
   const [teams, setTeams] = useState([]);
@@ -156,13 +159,13 @@ const SessionTable = ({
     () => {
       if (teams.length === 0) return;
 
-      updateTriviaSession({
-        leaderBoard: orderBy(teams, ["pointsTotal"], ["desc"]).map(team => ({
+      console.log("setLeaderBoard");
+      setLeaderBoard(
+        orderBy(teams, ["pointsTotal"], ["desc"]).map(team => ({
           name: team.name,
           pointsTotal: team.pointsTotal
         }))
-      });
-      console.log("update sent");
+      );
 
       if (!sessionCompleted) return;
 
@@ -171,7 +174,8 @@ const SessionTable = ({
         teams
       });
     },
-    [sessionCompleted, teams, triviaSession.uid, updateTriviaSession]
+    // esline-disable-next-line
+    [sessionCompleted, setLeaderBoard, teams, triviaSession.uid]
   );
 
   const updateTeamAnswer = (

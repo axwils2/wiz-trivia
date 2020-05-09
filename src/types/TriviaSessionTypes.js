@@ -3,6 +3,8 @@ import type { CategoryType } from "types/CategoryTypes";
 import type { QuestionType } from "types/QuestionTypes";
 
 export type TriviaSessionStatusType = "active" | "disabled" | "complete";
+export type LeaderBoardType = Array<LeaderBoardElementType>;
+export type LeaderBoardElementType = { name: string, pointsTtotal: number };
 
 export type TriviaSessionType = {
   uid: string,
@@ -14,5 +16,5 @@ export type TriviaSessionType = {
   userUid: string,
   waitingMessage: ?string,
   leaderBoardVisible: boolean,
-  leaderBoard: Array<{ name: string, pointsTotal: number }>
+  leaderBoard: LeaderBoardType
 };
