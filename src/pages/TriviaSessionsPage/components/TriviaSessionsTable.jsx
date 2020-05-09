@@ -12,6 +12,7 @@ import Paper from "@material-ui/core/Paper";
 import Button from "@material-ui/core/Button";
 import IconButton from "@material-ui/core/IconButton";
 import ArchiveIcon from "@material-ui/icons/Archive";
+import UnarchiveIcon from "@material-ui/icons/Unarchive";
 import Tooltip from "@material-ui/core/Tooltip";
 import findIndex from "lodash/findIndex";
 import reject from "lodash/reject";
@@ -72,10 +73,10 @@ const TriviaSessionsTable = ({
       });
   };
 
-  const archiveSession = (uid: string) => {
+  const archiveSession = (uid: string, archived: boolean) => {
     firestore
       .triviaSession(uid)
-      .update({ archived: true })
+      .update({ archived, status: "disabled" })
       .then(() => {
         setSessions(reject(sessions, session => session.uid === uid));
       });
@@ -154,12 +155,18 @@ const TriviaSessionsTable = ({
                 </ButtonLink>
               </TableCell>
               <TableCell align="right" className={classes.smallCell}>
-                <Tooltip title={"Archive Session"}>
+                <Tooltip
+                  title={
+                    session.archived ? "Unarchive Session" : "Archive Session"
+                  }
+                >
                   <IconButton
-                    onClick={() => archiveSession(session.uid)}
+                    onClick={() =>
+                      archiveSession(session.uid, !session.archived)
+                    }
                     size={"small"}
                   >
-                    <ArchiveIcon />
+                    {session.archived ? <UnarchiveIcon /> : <ArchiveIcon />}
                   </IconButton>
                 </Tooltip>
               </TableCell>
