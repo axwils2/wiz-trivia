@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Backdrop from "@material-ui/core/Backdrop";
+import ViewListIcon from "@material-ui/icons/ViewList";
 import Box from "@material-ui/core/Box";
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
@@ -13,13 +14,16 @@ import findIndex from "lodash/findIndex";
 import type { TeamType, TeamAnswerType } from "types/TeamTypes";
 import type { QuestionType } from "types/QuestionTypes";
 import type { CategoryType } from "types/CategoryTypes";
+import type { LeaderBoardType } from "types/TriviaSessionTypes";
 import { firestore } from "components/Firebase";
 import CountdownTimer from "components/CountdownTimer";
 import AnswerSection from "./AnswerSection";
+import LeaderBoardSideDrawer from "./LeaderBoardSideDrawer";
 
 type Props = {
   team: TeamType,
   triviaSessionUid: string,
+  leaderBoard: LeaderBoardType,
   currentQuestion: QuestionType,
   currentCategory: CategoryType
 };
@@ -43,7 +47,8 @@ const useStyles = makeStyles(theme => ({
     left: 0,
     padding: "0 16px 16px",
     width: "100%",
-    textAlign: "center"
+    display: "flex",
+    justifyContent: "center"
   },
   divider: {
     margin: "16px 0"
@@ -82,13 +87,20 @@ const defaultAnswer = (categoryUid, question) => {
 };
 
 const CurrentQuestion = (props: Props) => {
-  const { team, triviaSessionUid, currentQuestion, currentCategory } = props;
+  const {
+    team,
+    triviaSessionUid,
+    currentQuestion,
+    currentCategory,
+    leaderBoard
+  } = props;
   const classes = useStyles();
   const [answer, setAnswer] = useState(
     defaultAnswer(currentCategory.uid, currentQuestion)
   );
   const [submitted, setSubmitted] = useState(false);
   const [backdropOpen, setBackdropOpen] = useState(false);
+  const [leaderBoardOpen, setLeaderBoardOpen] = useState(false);
   const invalid =
     answer.body === "" ||
     (currentQuestion.wagerFormat === "multipleChoice" &&
@@ -243,6 +255,15 @@ const CurrentQuestion = (props: Props) => {
       />
       <Box className={classes.buttonContainer}>
         <Button
+          variant={"contained"}
+          color={"primary"}
+          size={"large"}
+          style={{ marginRight: "8px" }}
+          onClick={() => setLeaderBoardOpen(true)}
+        >
+          <ViewListIcon />
+        </Button>
+        <Button
           disabled={submitted || invalid}
           variant={"contained"}
           fullWidth
@@ -254,6 +275,11 @@ const CurrentQuestion = (props: Props) => {
           Submit
         </Button>
       </Box>
+      <LeaderBoardSideDrawer
+        open={leaderBoardOpen}
+        onClose={() => setLeaderBoardOpen(false)}
+        leaderBoard={leaderBoard}
+      />
     </Box>
   );
 };

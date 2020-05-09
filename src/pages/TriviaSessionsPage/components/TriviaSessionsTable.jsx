@@ -65,6 +65,7 @@ const TriviaSessionsTable = ({ history }: { history: * }) => {
     const updates = {
       currentQuestion: null,
       currentCategory: null,
+      leaderBoard: [],
       status: "disabled"
     };
     firestore

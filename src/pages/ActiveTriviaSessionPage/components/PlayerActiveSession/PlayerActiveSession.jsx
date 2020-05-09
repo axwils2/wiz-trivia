@@ -155,6 +155,7 @@ const PlayerActiveSession = ({ history }: { history: * }) => {
     <CurrentQuestion
       team={team}
       triviaSessionUid={triviaSession.uid}
+      leaderBoard={triviaSession.leaderBoard}
       currentQuestion={triviaSession.currentQuestion}
       currentCategory={triviaSession.currentCategory}
     />

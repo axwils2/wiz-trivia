@@ -31,7 +31,7 @@ const UpdateTriviaSessionForm = ({
   const updateTriviaSession = () => {
     firestore
       .triviaSession(triviaSession.uid)
-      .update({ name, accessCode, waitingMessage })
+      .update({ name, accessCode, waitingMessage, leaderBoardVisible })
       .then(() => {
         notify.success("Session successfully updated!");
       });

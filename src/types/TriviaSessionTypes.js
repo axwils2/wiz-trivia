@@ -4,7 +4,7 @@ import type { QuestionType } from "types/QuestionTypes";
 
 export type TriviaSessionStatusType = "active" | "disabled" | "complete";
 export type LeaderBoardType = Array<LeaderBoardElementType>;
-export type LeaderBoardElementType = { name: string, pointsTtotal: number };
+export type LeaderBoardElementType = { name: string, pointsTotal: number };
 
 export type TriviaSessionType = {
   uid: string,
