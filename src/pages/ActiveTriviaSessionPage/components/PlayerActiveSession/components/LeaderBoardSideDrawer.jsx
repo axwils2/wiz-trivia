@@ -40,22 +40,29 @@ const LeaderBoardSideDrawer = ({
       <div className={classes.list} role={"presentation"} onClick={onClose}>
         <List>
           <ListItem divider>
-            <ListItemText primary={"Leader Board"} />
+            <ListItemText primary={"Top 5 Leader Board"} />
           </ListItem>
-          {leaderBoard.map(({ name, pointsTotal }, index) => (
-            <ListItem
-              divider
-              key={name}
-              className={teamName === name && classes.highlight}
-            >
-              <ListItemText
-                primary={`${index + 1}.`}
-                className={classes.noGrow}
-              />
-              <ListItemText primary={name} />
-              <ListItemText primary={pointsTotal} className={classes.noGrow} />
-            </ListItem>
-          ))}
+          {leaderBoard.map(({ name, pointsTotal }, index) => {
+            if (index < 5) return null;
+
+            return (
+              <ListItem
+                divider
+                key={name}
+                className={teamName === name && classes.highlight}
+              >
+                <ListItemText
+                  primary={`${index + 1}.`}
+                  className={classes.noGrow}
+                />
+                <ListItemText primary={name} />
+                <ListItemText
+                  primary={pointsTotal}
+                  className={classes.noGrow}
+                />
+              </ListItem>
+            );
+          })}
         </List>
       </div>
     </Drawer>
