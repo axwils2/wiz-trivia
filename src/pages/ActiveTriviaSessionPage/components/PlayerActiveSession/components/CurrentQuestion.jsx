@@ -152,10 +152,11 @@ const CurrentQuestion = (props: Props) => {
   useEffect(
     () => {
       if (currentQuestion.timerOn) {
-        notify.error("30 second timer started!");
+        notify.warning("30 second timer started!");
       }
     },
-    [currentQuestion.timerOn, notify]
+    // eslint-disable-next-line
+    [currentQuestion.timerOn]
   );
 
   const updateAnswer = (updates: $Shape<TeamAnswerType>) => {
