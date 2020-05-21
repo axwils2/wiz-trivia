@@ -19,6 +19,7 @@ import { firestore } from "components/Firebase";
 import CountdownTimer from "components/CountdownTimer";
 import AnswerSection from "./AnswerSection";
 import LeaderBoardSideDrawer from "./LeaderBoardSideDrawer";
+import useNotify from "components/Notification";
 
 type Props = {
   team: TeamType,
@@ -99,6 +100,7 @@ const CurrentQuestion = (props: Props) => {
     currentCategory,
     leaderBoard
   } = props;
+  const notify = useNotify();
   const classes = useStyles();
   const [answer, setAnswer] = useState(
     defaultAnswer(currentCategory.uid, currentQuestion)
@@ -145,6 +147,15 @@ const CurrentQuestion = (props: Props) => {
       }
     },
     [currentQuestion, currentCategory, team.answers]
+  );
+
+  useEffect(
+    () => {
+      if (currentQuestion.timerOn) {
+        notify.error("30 second timer started!");
+      }
+    },
+    [currentQuestion.timerOn, notify]
   );
 
   const updateAnswer = (updates: $Shape<TeamAnswerType>) => {

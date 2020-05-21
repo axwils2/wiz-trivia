@@ -43,7 +43,7 @@ const LeaderBoardSideDrawer = ({
             <ListItemText primary={"Top 5 Leader Board"} />
           </ListItem>
           {leaderBoard.map(({ name, pointsTotal }, index) => {
-            if (index < 5) return null;
+            if (index > 4) return null;
 
             return (
               <ListItem

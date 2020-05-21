@@ -60,21 +60,23 @@ const UnauthrorizedRoutes = ({ authUser }) => {
   if (authUser) return null;
 
   return (
-    <Switch>
-      <Route exact path={ROUTES.LANDING} component={LandingPage} />
-      <Route
-        exact
-        path={ROUTES.ACTIVE_TRIVIA_SESSION.routePath}
-        component={ActiveTriviaSessionPage}
-      />
-      <Route exact path={ROUTES.SIGN_UP} component={SignUpPage} />
-      <Route
-        exact
-        path={ROUTES.PASSWORD_FORGET}
-        component={PasswordForgetPage}
-      />
-      <Route path={ROUTES.LANDING} component={SignInPage} />
-    </Switch>
+    <NotificationProvider>
+      <Switch>
+        <Route exact path={ROUTES.LANDING} component={LandingPage} />
+        <Route
+          exact
+          path={ROUTES.ACTIVE_TRIVIA_SESSION.routePath}
+          component={ActiveTriviaSessionPage}
+        />
+        <Route exact path={ROUTES.SIGN_UP} component={SignUpPage} />
+        <Route
+          exact
+          path={ROUTES.PASSWORD_FORGET}
+          component={PasswordForgetPage}
+        />
+        <Route path={ROUTES.LANDING} component={SignInPage} />
+      </Switch>
+    </NotificationProvider>
   );
 };
 

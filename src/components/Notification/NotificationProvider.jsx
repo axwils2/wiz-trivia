@@ -27,6 +27,11 @@ const NotificationProvider = ({ children }: { children: React.Node }) => {
     setOpen(false);
   };
 
+  const anchorOrigin =
+    window.innerWidth > 600
+      ? { vertical: "bottom", horizontal: "left" }
+      : { vertical: "top", horizontal: "center" };
+
   return (
     <NotificationContext.Provider value={showNotification}>
       {children}
@@ -34,10 +39,7 @@ const NotificationProvider = ({ children }: { children: React.Node }) => {
         open={open}
         autoHideDuration={4000}
         onClose={handleClose}
-        anchorOrigin={{
-          vertical: "bottom",
-          horizontal: "left"
-        }}
+        anchorOrigin={anchorOrigin}
       >
         <Alert onClose={handleClose} severity={severity}>
           {message}
