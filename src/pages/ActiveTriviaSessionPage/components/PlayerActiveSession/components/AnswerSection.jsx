@@ -10,6 +10,7 @@ import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Slider from "@material-ui/core/Slider";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import range from "lodash/range";
+import reject from "lodash/reject";
 
 import type { TeamAnswerType, TeamAnswerStatusType } from "types/TeamTypes";
 import type {
@@ -194,7 +195,9 @@ const WagerForm = ({
         onChange={e => updateAnswer({ wagerAmount: parseInt(e.target.value) })}
         className={classes.radioGroup}
       >
-        {range(safeRadioMinWager, safeRadioMaxWager + 1).map(value => (
+        {reject(range(safeRadioMinWager, safeRadioMaxWager + 1), value =>
+          safeDisabledWagers.includes(value)
+        ).map(value => (
           <FormControlLabel
             key={`radio-wagerAmount-${value}`}
             value={value}
@@ -203,8 +206,7 @@ const WagerForm = ({
             disabled={
               (repeatWagersDisabled &&
                 previousCategoryWagerAmounts.includes(value)) ||
-              status === "refreshed" ||
-              safeDisabledWagers.includes(value)
+              status === "refreshed"
             }
           />
         ))}
