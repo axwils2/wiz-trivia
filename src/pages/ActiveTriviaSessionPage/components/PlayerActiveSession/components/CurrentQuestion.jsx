@@ -219,7 +219,7 @@ const CurrentQuestion = (props: Props) => {
     if (!currentQuestion) return;
 
     const gifUrl = currentQuestion[`${answer.status}GifUrl`];
-    if (!gifUrl) return;
+    if (!gifUrl || gifUrl === "") return;
 
     return <img src={gifUrl} className={classes.backdropGif} alt={"gif"} />;
   };
