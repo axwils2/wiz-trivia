@@ -44,7 +44,8 @@ type WagerFormProps = {
   status: TeamAnswerStatusType,
   repeatWagersDisabled: boolean,
   minWager: ?number,
-  maxWager: ?number
+  maxWager: ?number,
+  disabledWagers: ?Array<number>
 };
 
 const useStyles = makeStyles(theme => ({
@@ -170,7 +171,8 @@ const WagerForm = ({
   status,
   repeatWagersDisabled,
   minWager,
-  maxWager
+  maxWager,
+  disabledWagers
 }: WagerFormProps) => {
   const classes = useStyles();
   const safeRadioMinWager =
@@ -181,6 +183,7 @@ const WagerForm = ({
     minWager === null || minWager === undefined ? 0 : minWager;
   const safeSliderMaxWager =
     maxWager === null || maxWager === undefined ? 25 : maxWager;
+  const safeDisabledWagers = disabledWagers || [];
 
   if (wagerFormat === "multipleChoice") {
     return (
@@ -200,7 +203,8 @@ const WagerForm = ({
             disabled={
               (repeatWagersDisabled &&
                 previousCategoryWagerAmounts.includes(value)) ||
-              status === "refreshed"
+              status === "refreshed" ||
+              safeDisabledWagers.includes(value)
             }
           />
         ))}
@@ -284,6 +288,7 @@ const AnswerSection = (props: AnswerSectionProps) => {
         repeatWagersDisabled={currentCategory.repeatWagersDisabled}
         minWager={currentQuestion.minWager}
         maxWager={currentQuestion.maxWager}
+        disabledWagers={currentQuestion.disabledWagers}
         status={answer.status}
       />
     </Box>

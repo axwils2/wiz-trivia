@@ -12,6 +12,7 @@ import FormControl from "@material-ui/core/FormControl";
 import FormLabel from "@material-ui/core/FormLabel";
 import Divider from "@material-ui/core/Divider";
 import toLower from "lodash/toLower";
+import get from "lodash/get";
 
 import { firestore } from "components/Firebase";
 import {
@@ -72,6 +73,7 @@ const QuestionForm = ({
   const [correctGifUrl, setCorrectGifUrl] = useState(null);
   const [incorrectGifUrl, setIncorrectGifUrl] = useState(null);
   const [openResponseListCount, setOpenResponseListCount] = useState(1);
+  const [disabledWagersString, setDisabledWagersString] = useState("");
   const newQuestion = !question;
   const optionsRequired = ["multipleChoice", "dragDropList"].includes(
     answerFormat
@@ -93,6 +95,7 @@ const QuestionForm = ({
       setCorrectGifUrl(question.correctGifUrl);
       setIncorrectGifUrl(question.incorrectGifUrl);
       setOpenResponseListCount(question.openResponseListCount || 1);
+      setDisabledWagersString(get(question, "disabledWagers", []).join(", "));
     },
     [question]
   );
@@ -109,6 +112,9 @@ const QuestionForm = ({
     if (newQuestion || !question) return;
 
     const options = optionsRequired ? optionsString.split(", ") : [];
+    const disabledWagers = disabledWagersString
+      .split(", ")
+      .map(str => parseInt(str));
     const questionRef = firestore.question(
       triviaSessionUid,
       categoryUid,
@@ -128,7 +134,8 @@ const QuestionForm = ({
         maxWager,
         correctGifUrl,
         incorrectGifUrl,
-        openResponseListCount
+        openResponseListCount,
+        disabledWagers
       })
       .then(() => {
         questionRef.get().then(doc => {
@@ -344,6 +351,17 @@ const QuestionForm = ({
               margin={"normal"}
               className={classes.wagerTextField}
               value={maxWager}
+            />
+          </Box>
+          <Box className={classes.flexSection}>
+            <TextField
+              label={"Disabled Wagers (Comma + Space Separated)"}
+              name={"disabledWagers"}
+              variant={"outlined"}
+              onChange={e => setDisabledWagersString(e.target.value)}
+              margin={"normal"}
+              value={disabledWagersString}
+              fullWidth
             />
           </Box>
         </Box>
